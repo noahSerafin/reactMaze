@@ -1,0 +1,177 @@
+#root{
+    width: 100vw;
+    .game-container{
+        display: flex;
+        align-items: center;
+        flex-direction: column-reverse;
+    }
+}
+.flex{
+    display: flex;
+    //justify-content: center;
+    align-items: center;
+}
+header{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 50%;
+    margin: auto;
+}
+
+main{
+    h1{
+        margin-bottom: 0;
+    }
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+button{
+    padding: 10px;
+    margin: 10px;
+}
+.instructions {
+    width: 100vmin;
+    margin: auto;
+    display: flex;
+    justify-content: space-around;
+}
+.control-up{
+    display: flex;
+    justify-content: center;
+}
+div{
+    display: block;
+}
+#game-board{
+   background-color: aliceblue;
+    width: 80vmin;
+    height: 80vmin;
+    display: flex;
+    flex-wrap: wrap;
+}
+#game-board:nth-child(2n){
+    
+}
+.board__row:nth-child(2n){
+
+}
+.player{
+    background-color: lightseagreen;
+    content: 'P';
+}
+.wall, .corner{
+    background-color: gray;
+}
+.horizontal{
+    //height: 10px;
+    //width: 40px;
+}
+.vertical{
+    //width: 10px;
+    //height: 40px;
+}
+.corner{
+    //height: 10px;
+    //width: 10px;
+}
+.finish{
+    background-color: yellow;
+}
+
+.red{
+    //background-color: tomato;
+    background-color: red;
+    &::before, &::after{
+        background-color: red;
+    }
+}
+.blue{
+    //background-color: lightskyblue;
+    background-color: blue;   
+    &::before, &::after{
+        background-color: blue;   
+    }
+}
+.green{
+    //background-color: lightgreen;
+    background-color: green;   
+    &::before, &::after{
+        background-color: green;   
+    }
+}
+.door{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    &::before{
+        content: '';
+        background-color: lightgray;
+        -webkit-transition:  all 0.5s ease-in-out;
+        -moz-transition: all 0.5s ease-in-out;
+        -o-transition:  all 0.5s ease-in-out;
+        transition: all 0.5s ease-in-out;
+    }
+    &.horizontal{
+        &::before{
+            position: absolute;
+            background-color: lightgrey;
+            height: 100%;
+            width: 80%;
+        }
+    }
+    &.vertical{
+        &::before{
+            height: 80%;
+            width: 100%;
+        }
+    }
+}
+.closed{
+    &.horizontal{
+        &::before{
+            height: 100%;
+            width: 0%;
+        }
+    }
+    &.vertical{
+        &::before, &::after{
+            height: 0%;
+            width: 100%;
+        }
+    }
+}
+.path, .player{
+   // width: 40px;
+    //height: 40px;
+}
+.path{
+    background-color: lightgray;
+}
+.path.vertical{
+    width: 10px;
+}
+.path.horizontal{
+    height: 10px;
+    
+}
+.tile{
+   
+}
+.tile:nth-child(2n){
+ 
+}
+body{
+    background-color: black;
+    color: white;
+}
+.open::before{
+    box-shadow: 1px 1px 2px 2px darkgray inset;
+}
+.instructions{
+    margin-bottom: 4rem;
+}
