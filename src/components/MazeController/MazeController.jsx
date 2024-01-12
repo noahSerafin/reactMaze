@@ -2,11 +2,12 @@ import { useCallback, useEffect } from "react";
 
 const MazeController = (props) => {
 
-    const {Move} = props;  
+    const {playerx, playery, maze, Move, levelNum, raiseLevel} = props;
 
     const handleKeyPress = useCallback((e) => {
         e.preventDefault();
         console.log(`Key pressed: ${e.key}`);
+        console.log('cmoving from', playerx, playery, maze)
         if(e.key === 'w'){    
             Move("up");
         }else if(e.key === 's'){ 
@@ -16,13 +17,16 @@ const MazeController = (props) => {
         }else if(e.key === 'd'){ 
             Move("right");
         }
+        //console.log('maze:', maze)
+        //console.log('moved to:', playerx, playery)
     }, []);
 
     useEffect(() => {
         // attach the event listener
         document.addEventListener('keydown', handleKeyPress);
-    
-    }, [handleKeyPress]);
+        //console.log('controller', maze)
+        console.log('moved to:', playerx, playery, maze)
+    }, [maze, playerx, playery, handleKeyPress]);
     
 
     return (
@@ -40,6 +44,12 @@ const MazeController = (props) => {
             </div>
             <button id="refresh">start over</button>
             <div>
+            <h3>Level: {levelNum}</h3>
+                <button onClick={raiseLevel}>
+                    next Level
+                </button>
+            <div>
+            </div>
                 Steps: <div id="counter"></div>
             </div>
         </div>

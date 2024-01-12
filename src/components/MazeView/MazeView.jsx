@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Tile from "./Tile";
 
 const MazeView = (props) => {
-    console.log('maxeView')
 
     const {startingMaze, maze, setMaze, player, count} = props;
     const [stepCount, setStepCount] = useState(count)
@@ -12,7 +11,7 @@ const MazeView = (props) => {
     const shorts = ((maze[0].length-1)/2+1);
     const segmentWidth = 100 / ((wides * 4) + shorts)
 
-    const [currentMaze, setCurrentMaze] = useState(maze);
+    //const [currentMaze, setCurrentMaze] = useState(maze);
 
     function returnPiece(tile){
         switch(tile){    
@@ -52,7 +51,7 @@ const MazeView = (props) => {
     //draw the maze
     function draw(){
 
-        let tempMaze = maze;
+        let tempMaze = Array.from(maze);
         let tileList = []
     
         //gameBoard.innerHTML = '';
@@ -112,18 +111,26 @@ const MazeView = (props) => {
             }
         }
         //console.log(tileList)
-        setMaze(tempMaze);
+        //setMaze(tempMaze);
         //console.log(maze)
 
         return tileList;
     }
 
+    let tileID = 0
     let tiles = draw().map(function(tile) {
         //console.log('drawing')
+        tileID++
         return(
-            <Tile tile={tile}/>
+            <Tile key={tileID} tile={tile}/>
         )
     })
+
+    useEffect(() => {
+        console.log('viewStart', startingMaze)
+        console.log('view', maze)
+        //draw()
+    }, [startingMaze, maze]);
     
     return (
         <>

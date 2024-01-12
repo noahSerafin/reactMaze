@@ -1,32 +1,67 @@
-import { useState, useEffect } from "react";
+
+import {  useCallback, useState, useEffect } from "react";
 import MazeView from '../MazeView/MazeView';
 import MazeController from '../MazeController/MazeController';
+import {levels} from "../../assets/defaults";
 
 const GameContainer = () => {
 
-    const player = {
-        x : 1,
-        y : 1
+    const [levelNum, setlevelNum] = useState(1)
+    const [maze, setMaze] = useState(levels[levelNum-1]) //current state of maze
+    const [initialMaze, setInitialMaze] = useState(levels[levelNum-1]) //starting state of maze/level
+    const [count, setCount] = useState(0) //steps
+    
+    const findPlayerPos = (currentMaze) => {
+        for (let row = 0; row < currentMaze.length; row++) {
+            for (let column = 0; column < currentMaze[row].length; column++) {
+                if (currentMaze[row][column] === 'P') {
+                    return { x: column, y: row };
+                }
+            }
+        }
+        // Return a default position if the player is not found
+        return { x: -1, y: -1 };
+    };
+
+    const [playerX, setPlayerX] = useState(findPlayerPos(maze).x)
+    const [playerY, setPlayerY] = useState(findPlayerPos(maze).y)
+    //console.log('start', playerx, playery)
+    //console.log('GAMECONTAINER', playerX, playerY, maze)
+
+    const raiseLevel = () => {
+        //console.log(levelNum, levels[levelNum-1])
+        let tempNum = levelNum < levels.length ? levelNum + 1 : 1;
+        
+        setlevelNum(tempNum);
+        console.log('new level:', tempNum, levels[tempNum-1])
+
+        //setLevel(levels[levelNum-1])
+        let tempLevel = levels[tempNum-1]
+   
+        console.log('tempLevel:', tempLevel)
+        setInitialMaze(() => [...tempLevel])
+
+        //renders correct until move(), state of maze is not acutally changing
+        /*setMaze(() => [...tempLevel]){
+
+        }
+        setPlayerX(findPlayerPos().x)
+        setPlayerY(findPlayerPos().y)*?*/
+        setMaze((prevMaze) => [...tempLevel]);
+        
+        //setMaze(maze => [...initialMaze])
+        console.log('newInitialMaze:', initialMaze)
+        console.log('newMaze:', maze)
+        console.log('playerinnewlevel', playerX, playerY)
+
     }
 
-    var initialMaze = [
-        ['+', '-', '+', '-', '+', '-', '+', '-', '+', '-', '+', '-', '+'],
-        ['|', 'P', 0, 0, 0, 0, 0, 0, 0, 0, '|', 0, '|'],
-        ['+', 1, '+', 6, '+', 2, '+', '-', '+', 0, '+', '-', '+'],
-        ['|', 0, '0', 0, '|', 0, '|', 0, '|', 0, 0, 0, '|'],
-        ['+', 0, '+', '-', '+', 0, '+', 0, '+', '-', '+', 0, '+'],
-        ['|', 0, 0, 0, '0', 0, '0', 0, '|', 0, 0, 0, '|'],
-        ['+', 0, '+', 0, '+', 0, '+', '-', '+', 0, '+', '-', '+'],
-        ['|', 0, '|', 0, '|', 0, 6, 0, 0, 0, 0, 0, '|'],
-        ['+', 0, '+', 0, '+', 0, '+', 0, '+', '-', '+', 0, '+'],
-        ['|', 0, 7, 0, 0, 0, '|', 0, 0, 0, 3, 0, '|'],
-        ['+', 5, '+', '-', '+', 0, '+', 0, '+', '-', '+', '-', '+'],
-        ['|', 0, '|', 0, '|', 0, 0, 0, 0, 0, 0, 0, '|'],
-        ['+', '-', '+', '-', '+', '-', '+', '-', '+', '-', '+', '-', '+']
-    ]
-
-    const [maze, setMaze] = useState(initialMaze)
-    const [count, setCount] = useState(0)
+    const startOver = () => {
+        let prevMaze = maze
+        setMaze((prevMaze)  => {
+            return [...initialMaze]
+        })
+    }
 
     const switchDoor = (tile, color) => { 
         switch (color) {
@@ -63,103 +98,154 @@ const GameContainer = () => {
 
     const invertDoors = (color) => {
         let tempMaze = maze
-      
-        /*tempMaze = tempMaze.map(row => {
-            return row.map(tile => {            
-                return switchDoor(tile, color)
-            })
-        })*/
+    
         for (let row = 0; row< tempMaze.length; row++) {
             for (let column = 0; column < tempMaze[row].length; column++){   
                 tempMaze[row][column] = switchDoor(maze[row][column], color)
             }
         }
        
-        setMaze(tempMaze);
+        setMaze(maze => [...tempMaze]);
     }
 
-    const Move = (input) => {
-        console.log('input', input)
-        let tempMaze = maze
+    const Move = (input, currentMaze, currentPosition) => {
+        
+        let tempMaze = Array.from(maze)
+        
+        let playerx = playerX //findPlayerpos based on maze once correct maze value is being received
+        let playery = playerY
+       
+        //console.log('input', input, tempMaze)
+       
+        console.log('moving from', playerx, playery, tempMaze)
+        
+        tempMaze[playery][playerx] = 0
+        //console.log( tempMaze[playery][playerx])
 
-        tempMaze[player.y][player.x] = 0
-        //console.log( tempMaze[player.y][player.x])
-
-        if(input == "left" && tempMaze[player.y][player.x-1] <= 3 && tempMaze[player.y][player.x-2] == 0)
+        if(!(input == "left" && tempMaze[playery][playerx-1] <= 3 && tempMaze[playery][playerx-2] == 0) && !(input == "right"  && tempMaze[playery][playerx+1] <= 3  && tempMaze[playery][playerx+2] == 0) && !(input == "up" && tempMaze[playery-1][playerx] <= 3  && tempMaze[playery-2][playerx] == 0) && !(input == "down" && tempMaze[playery+1][playerx] <= 3  && tempMaze[playery+2][playerx] == 0)){
+            console.log('invalid move');
+            tempMaze[playery][playerx] = 'P'
+        }
+        if(input == "left" && tempMaze[playery][playerx-1] <= 3 && tempMaze[playery][playerx-2] == 0)
         {           
-            if(tempMaze[player.y][player.x-1] == 1){
+            if(tempMaze[playery][playerx-1] == 1){
                 invertDoors("red"); 
-            } else if(tempMaze[player.y][player.x-1] == 2){
+            } else if(tempMaze[playery][playerx-1] == 2){
                 invertDoors("blue");  
-            } else if(tempMaze[player.y][player.x-1] == 3){
+            } else if(tempMaze[playery][playerx-1] == 3){
                 invertDoors("green");
             }   
-            player.x -= 2
+            tempMaze[playery][playerx - 2] = 'P'
+            setPlayerX(playerx => playerx - 2)
         }
-        if(input == "right"  && tempMaze[player.y][player.x+1] <= 3  && tempMaze[player.y][player.x+2] == 0)
+        if(input == "right"  && tempMaze[playery][playerx+1] <= 3  && tempMaze[playery][playerx+2] == 0)
         {
             console.log('right')
-            if(tempMaze[player.y][player.x+1] == 1){                   
+            if(tempMaze[playery][playerx+1] == 1){                   
                 invertDoors("red");
-            } else if(tempMaze[player.y][player.x+1] == 2){
+            } else if(tempMaze[playery][playerx+1] == 2){
                 invertDoors("blue");
-            } else if(tempMaze[player.y][player.x+1] == 3){
+            } else if(tempMaze[playery][playerx+1] == 3){
                 invertDoors("green");
             }
-            player.x += 2
+            tempMaze[playery][playerx + 2] = 'P'
+            setPlayerX(playerx => playerx + 2)
         }
-        if(input == "up" && tempMaze[player.y-1][player.x] <= 3  && tempMaze[player.y-2][player.x] == 0)
+        if(input == "up" && tempMaze[playery-1][playerx] <= 3  && tempMaze[playery-2][playerx] == 0)
         {
-            if(tempMaze[player.y -1][player.x] == 1){
+            if(tempMaze[playery -1][playerx] == 1){
                 invertDoors("red");
-            } else if(tempMaze[player.y -1][player.x] == 2){
+            } else if(tempMaze[playery -1][playerx] == 2){
                 invertDoors("blue");
-            } else if(tempMaze[player.y -1][player.x] == 3){
+            } else if(tempMaze[playery -1][playerx] == 3){
                 invertDoors("green");
             }
-            player.y -= 2
+            tempMaze[playery - 2][playerx] = 'P'
+            setPlayerY(playery => playery - 2)
         }
-        if(input == "down" && tempMaze[player.y+1][player.x] <= 3  && tempMaze[player.y+2][player.x] == 0)
+        if(input == "down" && tempMaze[playery+1][playerx] <= 3  && tempMaze[playery+2][playerx] == 0)
         {
             console.log('down')
-            if(tempMaze[player.y +1][player.x] == 1){
+            if(tempMaze[playery +1][playerx] == 1){
                 invertDoors("red");
-            } else if(tempMaze[player.y +1][player.x] == 2){
+            } else if(tempMaze[playery +1][playerx] == 2){
                 invertDoors("blue");
-            } else if(tempMaze[player.y +1][player.x] == 3){
+            } else if(tempMaze[playery +1][playerx] == 3){
                 invertDoors("green");
             }
-            player.y += 2
+            tempMaze[playery + 2][playerx] = 'P'
+            setPlayerY(playery => playery + 2)
         }
-        tempMaze[player.y][player.x] = 'P'
 
-        console.log('tempMaze', tempMaze)
-        console.log('setting maze', player)
+        console.log('tempMaze after move', tempMaze)
         setMaze(maze => [...tempMaze])
-        console.log('maze:', maze)
-
-        //console.log(`${player.x} ${player.y}`)
-       /* if(player.x == tempMaze[0].length && player.y == tempMaze.length-1){
-            alert(`Level Complete! You took ${stepCount} steps`)
-            console.log("You Win!")
-        }*/
-        //debug()
+        
+        //console.log('player', playerx, playery)
     }
 
-    //const gameBoard = <div className='game-board' id='game-board'></div>
+    //key listener/controller/////////////
+    const handleKeyPress = useCallback((e) => {
+        e.preventDefault();
+        console.log(`Key pressed: ${e.key}`);
+        console.log('cmoving from', playerX, playerY, maze)
+        if(e.key === 'w'){    
+            Move("up");
+        }else if(e.key === 's'){ 
+            Move("down");
+        }else if(e.key === 'a'){ 
+            Move("left");
+        }else if(e.key === 'd'){ 
+            Move("right");
+        }
+        //console.log('maze:', maze)
+        //console.log('moved to:', playerx, playery)
+    }, []);
+
+    ////////////////////////
+
     useEffect(() => {    
+
+        setPlayerX(findPlayerPos(maze).x);
+        setPlayerY(findPlayerPos(maze).y);
+
+        document.addEventListener('keydown', handleKeyPress);
         console.log('model detected change')
-        
-     }, [JSON.stringify(maze)]);
+        console.log('useEffect:', playerX, playerY, 'current:', maze, 'initial:', initialMaze)//values work here can Move() go inside this?
+    }, [maze, playerX, playerY, initialMaze]);//, JSON.stringify(maze)]);
 
     return (
         <div className='game-container'>
-            <MazeController maze={maze} player={player} Move={Move}/>
-            <div className='game-board' id='game-board'>
-                <MazeView startingMaze={initialMaze} maze={maze} setMaze={setMaze} player={player} count={count}/>
+            <div className="flex">
             </div>
+            <button id="save">save</button>
+            <div className="instructions">
+                <h4>WASD to move, or:</h4>
+                <div className="controls">
+                    <div className="control-up">
+                        <button id="up" onClick={() => {Move("up")}}>^</button>
+                    </div>               
+                    <button id="left" onClick={() => {Move("left")}}>L</button>
+                    <button id="down" onClick={() => {Move("down")}}>v</button>
+                    <button id="right" onClick={() => {Move("right")}}>R</button>                
+                </div>
+                <button id="refresh"  onClick={() => {startOver()}}>start over</button>
+                <div>
+                <h3>Level: {levelNum}</h3>
+                    <button onClick={raiseLevel}>
+                        next Level
+                    </button>
+                <div>
+                </div>
+                    Steps: <div id="counter"></div>
+                </div>
+            </div>
+                <div className='game-board' id='game-board'>
+                    <MazeView startingMaze={initialMaze} maze={maze} setMaze={setMaze} count={count}/>
+                </div>
         </div>
     )
 }
 
 export default GameContainer;
+
+//<MazeController playerx={playerX} playery={playerY} maze={maze} Move={Move} levelNum={levelNum} raiseLevel={raiseLevel}/>

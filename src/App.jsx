@@ -1,19 +1,15 @@
-import { useState } from 'react'
-import './styles.scss'
+import { useState, useEffect } from 'react';
+import './styles.scss';
 import GameContainer from './components/GameContainer/GameContainer';
+import LevelList from './components/LevelList/LevelList';
+
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <>
       <main>
-        <div className="flex">
-          <h3>MAZel</h3>
-          <button onClick={() => setCount((count) => count + 1)}>
-            generate {count}
-          </button>
-        </div>
+        <h3>Maze</h3>
         <GameContainer/>
         <p>
           Edit <code>src/App.jsx</code> and save to test HMR
@@ -22,5 +18,6 @@ function App() {
     </>
   )
 }
-
+ 
 export default App
+//levels={levels}
