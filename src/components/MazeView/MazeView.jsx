@@ -14,38 +14,41 @@ const MazeView = (props) => {
     //const [currentMaze, setCurrentMaze] = useState(maze);
 
     function returnPiece(tile){
-        switch(tile){    
-            case 0:
-                return 'path'            
-            case 1:                        
-                return 'red open'
-            case 2:
-                return 'blue open'
-            case 3:
-               return 'green open'
-            case 4:
-                return 'wall'
-            case '-':
-                return 'wall'
-            case '|':
-                return 'wall'
-            case '+':
-                return 'corner' 
-            case 5:
-               return 'red closed'
-            case 6:
-                return 'blue closed'
-            case 7:
-                return 'green closed'
-            case '0':
-                return 'path'
-            case 'P':
-                return 'player'
-            case 'E':
-                return 'finish'
-            case tile > 7:
-                return 'wall'
-        }  
+        if (tile === tile.toLowerCase()) {
+            // Lowercase tiles
+            switch (tile) {
+                case 'p':
+                    return 'path';
+                case 'r':
+                    return 'red door open';
+                case 'b':
+                    return 'blue door open';
+                case 'g':
+                    return 'green door open';
+                case '-':
+                case '|':
+                    return 'wall';
+                case '+':
+                    return 'corner';
+                case '0':
+                    return 'path';
+                case 'e':
+                    return 'finish';
+            }   
+        }  else {
+            switch (tile) {
+                case 'R':
+                    return 'red door closed';
+                case 'B':
+                    return 'blue door closed';
+                case 'G':
+                    return 'green door closed';
+                case 'P':
+                    return 'player';
+                case 'E':
+                    return 'finish';
+            }
+        }
     }
 
     //draw the maze
@@ -80,10 +83,7 @@ const MazeView = (props) => {
                 }
                 if(!isNaN(tile) && tile !== 4 && tile !== 0){
                     newTile.classList = newTile.classList.concat(' door ')
-                }
-                if(tile === '-' ||  tile == '|'){
-                    tile = 4;
-                }          
+                }         
                 newTile.style.gridRowStart = newTile.style.gridRowStart = row +1
                 newTile.style.gridColumnStart = newTile.style.gridColumnStart = column +1
                 newTile.classList = newTile.classList.concat(returnPiece(tile));
@@ -126,11 +126,11 @@ const MazeView = (props) => {
         )
     })
 
-    useEffect(() => {
+    /*useEffect(() => {
         console.log('viewStart', startingMaze)
         console.log('view', maze)
         //draw()
-    }, [startingMaze, maze]);
+    }, [startingMaze, maze]);*/
     
     return (
         <>

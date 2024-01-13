@@ -59,8 +59,18 @@ div{
 
 }
 .player{
-    background-color: lightseagreen;
+    background-color: lightgray;
+    //background-color: lightseagreen;
     content: 'P';
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &::before{
+        background-color: lightseagreen;
+        content: 'o_o';
+        padding: 20%;
+        border-radius: 50%;
+    }
 }
 .wall, .corner{
     background-color: gray;
@@ -168,6 +178,9 @@ div{
 body{
     background-color: black;
     color: white;
+}
+.open{
+    //background-color: aliceblue;
 }
 .open::before{
     box-shadow: 1px 1px 2px 2px darkgray inset;
