@@ -46,7 +46,7 @@ div{
     display: block;
 }
 #game-board{
-   background-color: aliceblue;
+   background-color: black;
     width: 80vmin;
     height: 80vmin;
     display: flex;
@@ -187,4 +187,29 @@ body{
 }
 .instructions{
     margin-bottom: 4rem;
+}
+.void{
+    background-color: black;
+    &::before, &::after{
+        content: none;
+    }
+}
+.level-editor-container{
+    .tile-list{
+        margin-left: 0.5rem;
+        button{
+            display: block;
+        }
+    }
+    .tile{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+.switch{
+    color: orange;
+}
+.mr-2{
+    margin-right: 2rem;
 }
