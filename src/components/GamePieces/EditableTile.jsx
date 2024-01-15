@@ -19,11 +19,22 @@ const EditableTile = (props) => {
     const determineVal = (dropper) => {
         if(!tile.classList.includes('corner')){
             if(tile.classList.includes('full')){
-                if(tile.value === '0'){
-                    setVal('p')
-                } else if(tile.value === 'p'){
-                    setVal('0')
-                }
+                //if(dropper === 'P'){
+                    if(tile.value === 'P'){
+                        setVal('p')
+                    } else if(tile.value === 'p'){
+                       setVal('P')
+                    }
+                //} else 
+                    if (dropper ==='void'){
+                        if(tile.value === '0'){
+                            setVal('p')
+                        } else if(tile.value === 'p'){
+                            setVal('0')
+                            //setVal('0')
+                        }
+                    }
+                //}
             } else if(dropper === 'Wall/Path'){
                 if (tile.value === '-' || tile.value === '|'){
                     setVal('p')
@@ -56,11 +67,11 @@ const EditableTile = (props) => {
 
     return (
         <div onClick={() => {setNewMaze(tile, val)}} id={tile.id} className={`${tile.classList} ${doorState}`} style={tile.style}>
-        
+
         </div>
     )
 }
-/*
+/* debug
  <div className="switch">{msg}</div>
             {tile.value}
             <div className="switch">{val}</div>

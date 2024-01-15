@@ -2,7 +2,7 @@
 import {  useCallback, useState, useEffect } from "react";
 import MazeView from '../MazeView/MazeView';
 import MazeController from '../MazeController/MazeController';
-import {levels} from "../../assets/defaults";
+import {levels} from "../../assets/levels";
 import { sassNull } from "sass";
 
 const GameContainer = () => {

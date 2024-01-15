@@ -88,7 +88,7 @@ div{
     //width: 10px;
 }
 .finish{
-    background-color: yellow;
+    background-color: white;
 }
 
 .red{
@@ -107,9 +107,33 @@ div{
 }
 .green{
     //background-color: lightgreen;
-    background-color: green;   
+    background-color: darkgreen;   
     &::before, &::after{
-        background-color: green;   
+        background-color: darkgreen;   
+    }
+}
+.magenta{
+    background-color: magenta;
+    &::before, &::after{
+        background-color: magenta;   
+    }
+}
+.yellow{
+    background-color: yellow;
+    &::before, &::after{
+        background-color: yellow; 
+    }
+}
+.cyan{
+    background-color: cyan;
+    &::before, &::after{
+        background-color: cyan;   
+    }
+}
+.orange{
+    background-color: orange;
+    &::before, &::after{
+        background-color: orange;   
     }
 }
 .door{

@@ -22,6 +22,14 @@ const LevelEditor = (props) => {
                     return 'blue door open';
                 case 'g':
                     return 'green door open';
+                case 'm':
+                    return 'magenta door open';
+                case 'c':
+                    return 'cyan door open';
+                case 'y':
+                    return 'yellow door open';
+                case 'o':
+                    return 'orange door open';
                 case '-':
                     return 'wall';
                 case '|':
@@ -41,6 +49,14 @@ const LevelEditor = (props) => {
                     return 'blue door closed';
                 case 'G':
                     return 'green door closed';
+                case 'M':
+                    return 'magenta door closed';
+                case 'C':
+                    return 'cyan door closed';
+                case 'Y':
+                    return 'yellow door closed';
+                case 'O':
+                    return 'orange door closed';
                 case 'P':
                     return 'player';
                 case 'E':
@@ -59,7 +75,7 @@ const LevelEditor = (props) => {
         //tempMaze[player.y][player.x] = 'P'
 
         //draw goal
-        tempMaze[tempMaze[0].length-2][tempMaze.length-1] = 'E'
+        //tempMaze[tempMaze[0].length-2][tempMaze.length-1] = 'E'
         
         let i = 0;
         for (let row = 0; row< tempMaze.length; row++) {
