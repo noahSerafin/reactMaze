@@ -47,6 +47,7 @@ const GameContainer = () => {
         setMaze((prevMaze)  => {
             return [...initialMaze]
         })
+        setCount(0)
     }
 
     const switchDoors = (tempMaze, tile) => {
@@ -59,6 +60,11 @@ const GameContainer = () => {
                 } 
             }
         }
+    }
+
+    const Finish = () => {
+        console.log('COMPLETE')
+        alert(`Level complete! You took ${count} Steps`)
     }
 
     const Move = (input, currentMaze, currentPosition) => {
@@ -95,25 +101,30 @@ const GameContainer = () => {
             tileInPath = tempMaze[playery - 1][playerx]
         }
         else if (input === "down"){
-            attemptedMove = tempMaze[playery + 2][playerx]
+            if (tempMaze[playery + 2]){
+                attemptedMove = tempMaze[playery + 2][playerx]
+            }
             attemptedY = playery + 2
             tileInPath = tempMaze[playery + 1][playerx]
         }
-
-        if (!(/^[a-z]$/.test(tileInPath) && /^[a-z]$/.test(attemptedMove) && attemptedMove === 'p')){
+        if (!(/^[a-z]$/.test(tileInPath) && /^[a-z]$/.test(attemptedMove) && attemptedMove === 'p')){//checks if tileInPath is a lowercase letter and 'p' (path)
             console.log('invalid move')
             tempMaze[playery][playerx] = 'P';
         } else {
-            if(/^[a-z]$/.test(tileInPath) && tileInPath !== 'p'){
+            if(/^[a-z]$/.test(tileInPath) && tileInPath !== 'p'){//checks if tileInPath is a lowercase letter
                 //invertDoors(tempMaze, color)
                 switchDoors(tempMaze, tileInPath)
             }
             tempMaze[attemptedY][attemptedX] = 'P'
+            setCount(count + 1)
         }
         console.log('test:', /^[a-z]$/.test(tileInPath) && tileInPath !== 'p')
 
         console.log('tempMaze after move', tempMaze)
         setMaze(maze => [...tempMaze])
+        if (tileInPath === 'E'){
+            Finish()
+        }
     }
 
     useEffect(() => {   
@@ -147,11 +158,10 @@ const GameContainer = () => {
 
     return (
         <div className='game-container'>
-            <div className="flex">
-            </div>
+            <div className="flex">WASD to move, or use arrows buttons</div>
             <button id="save">save</button>
-            <div className="instructions">
-                <h4>WASD to move, or:</h4>
+            <div className="instructions game-instructions">
+                <div id="counter">Steps: {count}</div>
                 <div className="controls">
                     <div className="control-up">
                         <button id="up" onClick={() => {Move("up")}}>^</button>
@@ -162,13 +172,10 @@ const GameContainer = () => {
                 </div>
                 <button id="refresh"  onClick={() => {startOver()}}>start over</button>
                 <div>
-                <h3>Level: {levelNum}</h3>
+                    <h3>Level: {levelNum}/{levels.length}</h3>
                     <button onClick={raiseLevel}>
                         next Level
                     </button>
-                <div>
-                </div>
-                    Steps: <div id="counter"></div>
                 </div>
             </div>
                 <div className='game-board' id='game-board'>

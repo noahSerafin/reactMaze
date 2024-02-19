@@ -11,6 +11,7 @@ const GameContainer = () => {
     const [levelNum, setlevelNum] = useState(1)
     const [size, setSize] = useState(12)
     const [height, setHeight] = useState(12)
+    const [count, setCount] = useState(0)
     const [maze, setMaze] = useState(levels[levelNum-1].map(row => [...row])) //current state of maze .map creates a deep copy to not affect the imported levels
 
     const [initialMaze, setInitialMaze] = useState(levels[levelNum-1].map(row => [...row])) //starting state of maze/level 
@@ -50,6 +51,7 @@ const GameContainer = () => {
         setMaze((prevMaze)  => {
             return [...initialMaze]
         })
+        setCount(0)
     }
 
     const switchDoors = (tempMaze, tile) => {
@@ -117,6 +119,7 @@ const GameContainer = () => {
 
         console.log('tempMaze after move', tempMaze)
         setMaze(maze => [...tempMaze])
+        setCount(count + 1)
     }
 
     function createArray(size) {
@@ -153,6 +156,8 @@ const GameContainer = () => {
         return tempMaze;
     }
 
+    //generative////////////////
+
     function createRandArray(size) {
         // Initialize the array
         let tempMaze = [];
@@ -172,24 +177,17 @@ const GameContainer = () => {
         }
         for (let row = 0; row< tempMaze.length; row++) {
             for (let column = 0; column < tempMaze[row].length; column++){
-                if(row===0 || row===tempMaze.length-1 || column===0 || column===tempMaze[row].length-1){
-                    tempMaze[row][column] = '-'
-                    if(column===0 || column === tempMaze.length-1){
-                        tempMaze[row][column] = '|'
-                    }
-                }
-                if(((row===0 || row === tempMaze.length-1) && (column % 2 === 0)) || ((column===0 || column === tempMaze.length-1) && row % 2 === 0) || (row % 2 === 0 && column % 2 === 0)){
-                    tempMaze[row][column] = '+'
-                }
-                else if((row!==0 || row!==tempMaze.length-1)&&(column!==0 || column === tempMaze.length-1)&&(row % 2 === 0 || column % 2 === 0)){
-                    let rng = Math.floor(Math.random() * 8);
+                if((row!==0 || row!==tempMaze.length-1)&&(column!==0 || column === tempMaze.length-1)&&(row % 2 === 0 || column % 2 === 0)){
+                    let max = 27
+                    let doorcuttoff = 24
+                    let rng = Math.floor(Math.random() * max);
                     
                     let randomTile = 'p'
-                    if(rng===0){
+                    if(rng===0 || (rng>16 && rng<doorcuttoff+1)){
                         randomTile = 'p'
-                    } else if(rng===1 &&  column % 2 === 0){
+                    } else if((rng===1 || rng>doorcuttoff)&& column % 2 === 0){
                         randomTile = '|'
-                    } else if(rng===1 &&  row % 2 === 0){
+                    } else if((rng===1 || rng>doorcuttoff)&& row % 2 === 0){
                         randomTile = '-'
                     } else if(rng===2){
                         randomTile = 'r'
@@ -203,14 +201,145 @@ const GameContainer = () => {
                         randomTile = 'b'
                     } else if(rng===7){
                         randomTile = 'B'
+                    } else if(rng===8){
+                        randomTile = 'o'
+                    } else if(rng===9){
+                        randomTile = 'O'
+                    } else if(rng===10){
+                        randomTile = 'm'
+                    } else if(rng===11){
+                        randomTile = 'M'
+                    } else if(rng===12){
+                        randomTile = 'c'
+                    } else if(rng===13){
+                        randomTile = 'C'
+                    } else if(rng===15){
+                        randomTile = 'y'
+                    } else if(rng===16){
+                        randomTile = 'Y'
                     }
                     tempMaze[row][column] = randomTile
                 }
+                if(row===0 || row===tempMaze.length-1 || column===0 || column===tempMaze[row].length-1){
+                    tempMaze[row][column] = '-'
+                    if(column===0 || column === tempMaze.length-1){
+                        tempMaze[row][column] = '|'
+                    }
+                }
+                if(((row===0 || row === tempMaze.length-1) && (column % 2 === 0)) || ((column===0 || column === tempMaze.length-1) && row % 2 === 0) || (row % 2 === 0 && column % 2 === 0)){
+                    tempMaze[row][column] = '+'
+                }
+                
             }
         }
         tempMaze[1][1]='P'
         setMaze(tempMaze)
     }
+
+    function generateMaze(size) {
+        // Initialize the array
+        let resultArray = [];
+      
+        // Generate a random player position
+        const playerRow = Math.floor(Math.random() * size);
+        const playerCol = Math.floor(Math.random() * size);
+      
+        // Generate a random exit position on the edge
+        const exitSide = Math.floor(Math.random() * 4); // 0: top, 1: right, 2: bottom, 3: left
+        let exitRow, exitCol;
+      
+        switch (exitSide) {
+          case 0: // top
+            exitRow = 0;
+            exitCol = Math.floor(Math.random() * size);
+            break;
+          case 1: // right
+            exitRow = Math.floor(Math.random() * size);
+            exitCol = size - 1;
+            break;
+          case 2: // bottom
+            exitRow = size - 1;
+            exitCol = Math.floor(Math.random() * size);
+            break;
+          case 3: // left
+            exitRow = Math.floor(Math.random() * size);
+            exitCol = 0;
+            break;
+        }
+      
+        // Loop through rows (size)
+        for (let i = 0; i < size; i++) {
+          // Initialize the row
+          let row = [];
+      
+          // Loop through columns (size) and set each element to 'p' or 'P' or 'E'
+          for (let j = 0; j < size; j++) {
+            if (i === playerRow && j === playerCol) {
+              row.push('P'); // Player
+            } else if (i === exitRow && j === exitCol) {
+              row.push('E'); // Exit
+            } else {
+              row.push('p'); // Path
+            }
+          }
+      
+          // Add the row to the result array
+          resultArray.push(row);
+        }
+      
+       setMaze(resultArray);
+    }
+
+    function drawPath(maze) {
+        const size = maze.length;
+      
+        // Find the player ('P') and exit ('E') positions
+        let playerRow, playerCol, exitRow, exitCol;
+        for (let i = 0; i < size; i++) {
+          for (let j = 0; j < size; j++) {
+            if (maze[i][j] === 'P') {
+              playerRow = i;
+              playerCol = j;
+            } else if (maze[i][j] === 'E') {
+              exitRow = i;
+              exitCol = j;
+            }
+          }
+        }
+      
+        // Initialize the path array
+        let pathArray = [...maze.map(row => row.slice())]; // Create a deep copy of the maze
+      
+        // Draw a random path from player to exit
+        let currentRow = playerRow;
+        let currentCol = playerCol;
+      
+        while (currentRow !== exitRow || currentCol !== exitCol) {
+          pathArray[currentRow][currentCol] = 'x';
+      
+          // Move randomly (up, down, left, or right)
+          const randomDirection = Math.floor(Math.random() * 4);
+      
+          switch (randomDirection) {
+            case 0: // Move up
+              if (currentRow > 0) currentRow--;
+              break;
+            case 1: // Move down
+              if (currentRow < size - 1) currentRow++;
+              break;
+            case 2: // Move left
+              if (currentCol > 0) currentCol--;
+              break;
+            case 3: // Move right
+              if (currentCol < size - 1) currentCol++;
+              break;
+          }
+        }
+      
+        setMaze(pathArray);
+    }
+      
+    ////////////////////////////////////////////////
 
     const handleSizeChange = (event) => {
         if(!(event.target.value % 2 === 0)){
@@ -254,6 +383,7 @@ const GameContainer = () => {
     const Save = () => {
         console.log('Saving to console:')
         console.log(maze)
+        navigator.clipboard.writeText(maze)
     }
 
     useEffect(() => {   
@@ -299,9 +429,7 @@ const GameContainer = () => {
             <div className="mr-2">Dropper: {dropper}</div>
         </div>
         <div className='game-container level-editor-container'>
-            <button id="save" onClick={() => {Save()}}>save</button>
             <div className="instructions">
-                <h4>WASD to move, or:</h4>
                 <div className="controls">
                     <div className="control-up">
                         <button id="up" onClick={() => {Move("up")}}>^</button>
@@ -311,14 +439,13 @@ const GameContainer = () => {
                     <button id="right" onClick={() => {Move("right")}}>R</button>                
                 </div>
                 <button id="refresh"  onClick={() => {startOver()}}>start over</button>
+                <button id="save" onClick={() => {Save()}}>save</button>
                 <div>
-                <h3>Level: {levelNum}</h3>
+                    <div id="counter">Steps: {count}</div>
+                    <h3>Level: {levelNum}</h3>
                     <button onClick={raiseLevel}>
                         next Level
                     </button>
-                <div>
-                </div>
-                    Steps: <div id="counter"></div>
                 </div>
             </div>
             <div className="flex">
@@ -342,8 +469,6 @@ const GameContainer = () => {
                     <button onClick={() => {setNewDropper('P')}}>Player: {dropper==='P' ? 'selected' : ''}</button>
                     <button onClick={() => {setNewDropper('E')}}>Exit: {dropper==='E' ? 'selected' : ''}</button>
                     <button onClick={() => {setNewDropper('void')}}>Void: {dropper==='void' ? 'selected' : ''}</button>
-                    <br></br>
-                    <button id="refresh"  onClick={() => {startOver()}}>reset maze</button>
                     <button id="refresh"  onClick={() => {resetPlayer()}}>reset player</button>
                     <button id="refresh"  onClick={() => {createRandArray(size)}}>randomise</button>
                 </div>
@@ -354,5 +479,6 @@ const GameContainer = () => {
 }
 
 export default GameContainer;
+//<button id="refresh"  onClick={() => {generateMaze(size)}}>generate</button>
 
 //<MazeController playerx={playerX} playery={playerY} maze={maze} Move={Move} levelNum={levelNum} raiseLevel={raiseLevel}/>

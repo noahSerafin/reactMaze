@@ -89,6 +89,15 @@ div{
 }
 .finish{
     background-color: white;
+    &::before{
+        content: 'EXIT';
+        height: 100%;
+        width: 100%;
+        color: black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 }
 
 .red{
@@ -229,6 +238,7 @@ body{
         display: flex;
         justify-content: center;
         align-items: center;
+        outline: 1px dotted darkgray;
     }
 }
 .switch{
@@ -236,4 +246,27 @@ body{
 }
 .mr-2{
     margin-right: 2rem;
+}
+.colourblind{
+    .red{
+        background-color: #d55e00;
+    }
+    .orange{
+        background-color: #e69f00;
+    }
+    .yellow{
+        background-color: #f0e442;
+    }
+    .green{
+        background-color: #009e73;
+    }
+    .blue{
+        background-color: #0072b2;
+    }
+    .cyan{
+        background-color: #56b4e9;
+    }
+    .magenta{
+        background-color: #cc79a7;
+    }
 }
