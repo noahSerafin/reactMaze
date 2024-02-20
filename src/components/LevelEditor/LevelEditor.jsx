@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from "react";
-import Tile from "../GamePieces/Tile";
+import EditableTile from "../GamePieces/EditableTile";
 
-const MazeView = (props) => {
+const LevelEditor = (props) => {
 
-    const {startingMaze, maze, setMaze, player, count} = props;
-    const [stepCount, setStepCount] = useState(count)
+    const {dropper, setDropper, setNewMaze, maze, setMaze, player, count} = props;
     //console.log('gameBoard:', gameBoard);
 
     const wides = (maze[0].length-1)/2;
     const shorts = ((maze[0].length-1)/2+1);
     const segmentWidth = 100 / ((wides * 4) + shorts)
 
-    //const [currentMaze, setCurrentMaze] = useState(maze);
-
     function returnPiece(tile){
-        if (tile && tile === tile.toLowerCase()) {
+        if (tile === tile.toLowerCase()) {
             // Lowercase tiles
             switch (tile) {
                 case 'p':
@@ -34,6 +31,7 @@ const MazeView = (props) => {
                 case 'o':
                     return 'orange door open';
                 case '-':
+                    return 'wall';
                 case '|':
                     return 'wall';
                 case '+':
@@ -138,7 +136,7 @@ const MazeView = (props) => {
         //console.log('drawing')
         tileID++
         return(
-            <Tile key={tileID} tile={tile}/>
+            <EditableTile key={tileID} tile={tile} dropper={dropper} setNewMaze={setNewMaze}/>
         )
     })
 
@@ -155,4 +153,4 @@ const MazeView = (props) => {
     )
 }
 
-export default MazeView;
+export default LevelEditor;

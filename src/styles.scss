@@ -11,7 +11,7 @@
     //justify-content: center;
     align-items: center;
 }
-header{
+.header{
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -20,6 +20,7 @@ header{
 }
 
 main{
+    background-color: lightgray;
     h1{
         margin-bottom: 0;
     }
@@ -31,22 +32,60 @@ main{
 button{
     padding: 10px;
     margin: 10px;
+    background-color: lightgray;
+    border-radius: 0;
+    border: 1px solid black;
+}
+.cb-button{
+    float: right;
 }
 .instructions {
     width: 100vmin;
     margin: auto;
-    display: flex;
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-gap: 0.8rem;
+    #counter{
+        text-align: right;
+    }
 }
-.control-up{
+.controls{
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    button{
+        margin: 0.4rem;
+        &::before{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            content: url(./assets/arrow.svg);
+            position: relative;
+            svg{
+                max-width: 1rem;
+                position: absolute;
+            }
+        }
+    }
+    #up::before{
+        transform: rotate(270deg);
+    }
+    #down::before{
+        transform: rotate(90deg);
+    }
+    #left::before{
+        transform: rotate(180deg);
+    }
+    .control-up{
+        display: flex;
+        justify-content: center;
+    }
 }
 div{
     display: block;
 }
 #game-board{
-   background-color: aliceblue;
+   background-color: black;
     width: 80vmin;
     height: 80vmin;
     display: flex;
@@ -59,8 +98,22 @@ div{
 
 }
 .player{
-    background-color: lightseagreen;
+    background-color: lightgray;
+    //background-color: lightseagreen;
     content: 'P';
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &::before{
+        background-color: lightseagreen;
+        content: 'o_o';
+        padding: 20%;
+        @media screen and (max-width: 480px) {
+            padding: 5%;
+            font-size: 0.9rem;
+        }
+        border-radius: 50%;
+    }
 }
 .wall, .corner{
     background-color: gray;
@@ -78,7 +131,41 @@ div{
     //width: 10px;
 }
 .finish{
-    background-color: yellow;
+    background-color: white;
+    &::before,  &::after{
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    &::before{
+        content: '';
+        background-color: greenyellow;
+    }
+    &::after{
+        position: relative;
+        top: -100%;
+        content: 'EXIT';
+        color: black;
+        font-weight: bold;
+        @media screen and (max-width: 480px) {
+            font-size: 0.6rem;
+        }
+    }   
+}
+.level-editor-container{
+    .finish{
+        &::before,  &::after{
+            top: unset;
+        }
+        background-color: greenyellow;
+    }
+}
+.finish.vertical{
+    &::after{
+       transform: rotate(90deg);  
+    }
 }
 
 .red{
@@ -100,6 +187,30 @@ div{
     background-color: green;   
     &::before, &::after{
         background-color: green;   
+    }
+}
+.magenta{
+    background-color: magenta;
+    &::before, &::after{
+        background-color: magenta;   
+    }
+}
+.yellow{
+    background-color: yellow;
+    &::before, &::after{
+        background-color: yellow; 
+    }
+}
+.cyan{
+    background-color: cyan;
+    &::before, &::after{
+        background-color: cyan;   
+    }
+}
+.orange{
+    background-color: orange;
+    &::before, &::after{
+        background-color: orange;   
     }
 }
 .door{
@@ -165,13 +276,98 @@ div{
 .tile:nth-child(2n){
  
 }
-body{
-    background-color: black;
-    color: white;
+.open{
+    //background-color: aliceblue;
 }
 .open::before{
     box-shadow: 1px 1px 2px 2px darkgray inset;
 }
 .instructions{
     margin-bottom: 4rem;
+}
+.void{
+    background-color: black;
+    &::before, &::after{
+        content: none;
+    }
+}
+.level-editor-container{
+    .tile-list{
+        margin-left: 0.5rem;
+        button{
+            display: block;
+        }
+    }
+    .tile{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        outline: 1px dotted darkgray;
+    }
+}
+.switch{
+    color: orange;
+}
+.mr-2{
+    margin-right: 2rem;
+}
+.container-header{
+    p{
+        margin-bottom: 0;
+    }
+    h4{
+        margin-top: 0;
+    }
+}
+.container-toggle{
+    @media screen and (max-width: 480px) {
+        display: none;
+    }
+}
+.colourblind-true{
+    .red{
+        background-color: #d55e00;
+    }
+    .orange{
+        background-color: #e69f00;
+    }
+    .yellow{
+        background-color: #f0e442;
+    }
+    .green{
+        background-color: #009e73;
+    }
+    .blue{
+        background-color: #0072b2;
+    }
+    .cyan{
+        background-color: #56b4e9;
+    }
+    .magenta{
+        background-color: #cc79a7;
+    }
+}
+@media screen and (min-width: 480px) {
+    .top{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .lower-buttons, .bottom-text{
+        width: 80%;
+        position: relative;
+        top: -8rem;
+        justify-content: space-between;
+    }
+    .level-editor-container{
+        .lower-buttons, .instructions{
+            // margin-right: 20%;
+        }
+    }
+    .bottom-text{
+        justify-content: center;
+    }
+}
+.dark-mode-true{
+    background-color: black;
+    color: white;
 }
