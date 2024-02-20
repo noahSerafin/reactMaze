@@ -6,26 +6,39 @@ import LevelEditorContainer from './components/LevelEditorContainer/LevelEditorC
 function App() {
 
   const [isGameContainer, setIsGameContainer] = useState(true);
+  const [colorblind, setColorblind] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
   const toggleContainer = () => {
     setIsGameContainer((prev) => !prev);
   };
+  const toggleColorBlind = () => {
+    setColorblind((prev) => !prev);
+  };
+  const toggleDarkMode = () => {
+    setDarkMode((prev) => !prev);
+  };
 
   return (
     <>
-      <main>
-        <div className="flex">
-          <h3>Maze</h3>
+      <main className={`dark-mode-${darkMode}`}>
+        <div className="top">
+          <div className="flex container-toggle">
+            <div className='container-header'>
+              <p>Mode:</p>
+              {isGameContainer ?<h4> Game</h4> : <h4>Level Editor</h4>}
+            </div>
+            <button onClick={toggleContainer}>Toggle Mode</button>
+          </div>
+          <h3 className='header'>Mazel</h3>
           <div className="flex">
-          <button onClick={toggleContainer}>Toggle Container</button>
-          {isGameContainer ? <h4>Game</h4> : <h4>Level Editor</h4>}
+            <button className='cb-button' onClick={toggleColorBlind}>Colourblind pallete: {colorblind ? 'On' : 'off'}</button>
+            <button className='cb-button' onClick={toggleDarkMode}>Dark mode: {darkMode ? 'On' : 'off'}</button>
           </div>
         </div>
-        {isGameContainer ? <GameContainer /> : <LevelEditorContainer />}
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-        
+        <div className={`colourblind-${colorblind}`}>
+          {isGameContainer ? <GameContainer /> : <LevelEditorContainer />}  
+        </div>
       </main>
     </>
   )

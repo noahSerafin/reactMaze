@@ -429,27 +429,27 @@ const GameContainer = () => {
             <div className="mr-2">Dropper: {dropper}</div>
         </div>
         <div className='game-container level-editor-container'>
-            <div className="instructions">
+            <div className="flex lower-buttons">
+                <button id="refresh"  onClick={() => {startOver()}}>start over</button>
+                <button id="save" onClick={() => {Save()}}>save to console</button>
+            </div>
+            <div className="instructions game-instructions">
+                <h3 id="counter">Steps: {count}</h3>
                 <div className="controls">
                     <div className="control-up">
-                        <button id="up" onClick={() => {Move("up")}}>^</button>
-                    </div>               
-                    <button id="left" onClick={() => {Move("left")}}>L</button>
-                    <button id="down" onClick={() => {Move("down")}}>v</button>
-                    <button id="right" onClick={() => {Move("right")}}>R</button>                
+                        <button id="up" onClick={() => {Move("up")}}></button>
+                    </div>       
+                    <div className="flex">
+                        <button id="left" onClick={() => {Move("left")}}></button>
+                        <button id="down" onClick={() => {Move("down")}}></button>
+                        <button id="right" onClick={() => {Move("right")}}></button>                
+                    </div>        
                 </div>
-                <button id="refresh"  onClick={() => {startOver()}}>start over</button>
-                <button id="save" onClick={() => {Save()}}>save</button>
                 <div>
-                    <div id="counter">Steps: {count}</div>
-                    <h3>Level: {levelNum}</h3>
-                    <button onClick={raiseLevel}>
-                        next Level
-                    </button>
+                    <h3>Level: {levelNum}/{levels.length}</h3>
                 </div>
             </div>
             <div className="flex">
-
                 <div className='game-board' id='game-board'>
                     <LevelEditor dropper={dropper} setNewMaze={setNewMaze} startingMaze={initialMaze} maze={maze} setMaze={setMaze}/>
                 </div>

@@ -11,7 +11,7 @@
     //justify-content: center;
     align-items: center;
 }
-header{
+.header{
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -20,6 +20,7 @@ header{
 }
 
 main{
+    background-color: lightgray;
     h1{
         margin-bottom: 0;
     }
@@ -31,16 +32,54 @@ main{
 button{
     padding: 10px;
     margin: 10px;
+    background-color: lightgray;
+    border-radius: 0;
+    border: 1px solid black;
+}
+.cb-button{
+    float: right;
 }
 .instructions {
     width: 100vmin;
     margin: auto;
-    display: flex;
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-gap: 0.8rem;
+    #counter{
+        text-align: right;
+    }
 }
-.control-up{
+.controls{
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    button{
+        margin: 0.4rem;
+        &::before{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            content: url(./assets/arrow.svg);
+            position: relative;
+            svg{
+                max-width: 1rem;
+                position: absolute;
+            }
+        }
+    }
+    #up::before{
+        transform: rotate(270deg);
+    }
+    #down::before{
+        transform: rotate(90deg);
+    }
+    #left::before{
+        transform: rotate(180deg);
+    }
+    .control-up{
+        display: flex;
+        justify-content: center;
+    }
 }
 div{
     display: block;
@@ -69,6 +108,10 @@ div{
         background-color: lightseagreen;
         content: 'o_o';
         padding: 20%;
+        @media screen and (max-width: 480px) {
+            padding: 5%;
+            font-size: 0.9rem;
+        }
         border-radius: 50%;
     }
 }
@@ -89,14 +132,39 @@ div{
 }
 .finish{
     background-color: white;
-    &::before{
-        content: 'EXIT';
+    &::before,  &::after{
         height: 100%;
         width: 100%;
-        color: black;
         display: flex;
         justify-content: center;
         align-items: center;
+    }
+    &::before{
+        content: '';
+        background-color: greenyellow;
+    }
+    &::after{
+        position: relative;
+        top: -100%;
+        content: 'EXIT';
+        color: black;
+        font-weight: bold;
+        @media screen and (max-width: 480px) {
+            font-size: 0.6rem;
+        }
+    }   
+}
+.level-editor-container{
+    .finish{
+        &::before,  &::after{
+            top: unset;
+        }
+        background-color: greenyellow;
+    }
+}
+.finish.vertical{
+    &::after{
+       transform: rotate(90deg);  
     }
 }
 
@@ -116,9 +184,9 @@ div{
 }
 .green{
     //background-color: lightgreen;
-    background-color: darkgreen;   
+    background-color: green;   
     &::before, &::after{
-        background-color: darkgreen;   
+        background-color: green;   
     }
 }
 .magenta{
@@ -208,10 +276,6 @@ div{
 .tile:nth-child(2n){
  
 }
-body{
-    background-color: black;
-    color: white;
-}
 .open{
     //background-color: aliceblue;
 }
@@ -247,7 +311,20 @@ body{
 .mr-2{
     margin-right: 2rem;
 }
-.colourblind{
+.container-header{
+    p{
+        margin-bottom: 0;
+    }
+    h4{
+        margin-top: 0;
+    }
+}
+.container-toggle{
+    @media screen and (max-width: 480px) {
+        display: none;
+    }
+}
+.colourblind-true{
     .red{
         background-color: #d55e00;
     }
@@ -269,4 +346,28 @@ body{
     .magenta{
         background-color: #cc79a7;
     }
+}
+@media screen and (min-width: 480px) {
+    .top{
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    .lower-buttons, .bottom-text{
+        width: 80%;
+        position: relative;
+        top: -8rem;
+        justify-content: space-between;
+    }
+    .level-editor-container{
+        .lower-buttons, .instructions{
+            // margin-right: 20%;
+        }
+    }
+    .bottom-text{
+        justify-content: center;
+    }
+}
+.dark-mode-true{
+    background-color: black;
+    color: white;
 }

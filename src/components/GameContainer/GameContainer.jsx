@@ -158,29 +158,32 @@ const GameContainer = () => {
 
     return (
         <div className='game-container'>
-            <div className="flex">WASD to move, or use arrows buttons</div>
-            <button id="save">save</button>
+            <div className="flex bottom-text">WASD to move, or use arrow buttons</div>
+            <div className="flex lower-buttons">
+                <button id="refresh"  onClick={() => {startOver()}}>start over</button>
+                <button onClick={raiseLevel}>
+                    next level
+                </button>
+            </div>
             <div className="instructions game-instructions">
-                <div id="counter">Steps: {count}</div>
+                <h3 id="counter">Steps: {count}</h3>
                 <div className="controls">
                     <div className="control-up">
-                        <button id="up" onClick={() => {Move("up")}}>^</button>
-                    </div>               
-                    <button id="left" onClick={() => {Move("left")}}>L</button>
-                    <button id="down" onClick={() => {Move("down")}}>v</button>
-                    <button id="right" onClick={() => {Move("right")}}>R</button>                
+                        <button id="up" onClick={() => {Move("up")}}></button>
+                    </div>       
+                    <div className="flex">
+                        <button id="left" onClick={() => {Move("left")}}></button>
+                        <button id="down" onClick={() => {Move("down")}}></button>
+                        <button id="right" onClick={() => {Move("right")}}></button>                
+                    </div>        
                 </div>
-                <button id="refresh"  onClick={() => {startOver()}}>start over</button>
                 <div>
                     <h3>Level: {levelNum}/{levels.length}</h3>
-                    <button onClick={raiseLevel}>
-                        next Level
-                    </button>
                 </div>
             </div>
-                <div className='game-board' id='game-board'>
-                    <MazeView startingMaze={initialMaze} maze={maze} setMaze={setMaze} count={count}/>
-                </div>
+            <div className='game-board' id='game-board'>
+                <MazeView startingMaze={initialMaze} maze={maze} setMaze={setMaze} count={count}/>
+            </div>
         </div>
     )
 }
