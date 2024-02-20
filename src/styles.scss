@@ -28,6 +28,10 @@ main{
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    @media screen and (max-width: 680px) {
+        top: 0;
+        height: 100vh;
+    }
 }
 button{
     padding: 10px;
@@ -141,7 +145,8 @@ div{
     }
     &::before{
         content: '';
-        background-color: greenyellow;
+        //background-color: greenyellow;
+        background-color: lightgrey;
     }
     &::after{
         position: relative;
@@ -159,7 +164,8 @@ div{
         &::before,  &::after{
             top: unset;
         }
-        background-color: greenyellow;
+        //background-color: greenyellow;
+        background-color: lightgrey;
     }
 }
 .finish.vertical{

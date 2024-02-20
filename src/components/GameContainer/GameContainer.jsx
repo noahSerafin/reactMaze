@@ -40,6 +40,7 @@ const GameContainer = () => {
         setInitialMaze(() => [...tempLevel])
 
         setMaze((prevMaze) => [...tempLevel]); 
+        setCount(0)
         //console.log('newInitialMaze:', levelNum, initialMaze)
     }
 
