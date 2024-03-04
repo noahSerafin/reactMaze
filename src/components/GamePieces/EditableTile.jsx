@@ -46,8 +46,10 @@ const EditableTile = (props) => {
             } else if(dropper === 'E'){
                 if(tile.value === '-' || tile.value === '|' || tile.value === 'p'){
                     setVal('E')
-                } else if(tile.value === 'E'){
-                    setVal('p')
+                } else if(tile.classList.includes('horizontal')){
+                    setVal('-')
+                } else if(tile.classList.includes('vertical')){
+                    setVal('|')
                 }
             } else if(/^[a-z]$/.test(dropper)){
                 //msg = `${(/^[a-z]$/.test(dropper))}`

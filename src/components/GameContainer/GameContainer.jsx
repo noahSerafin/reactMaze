@@ -133,14 +133,16 @@ const GameContainer = () => {
             e.preventDefault();
             console.log(`Key pressed: ${e.key}`);
             //console.log('cmoving from', playerX, playerY, maze)
-            if(e.key === 'w'){    
+            if(e.key === 'w' || e.key === 'ArrowUp'){    
                 Move("up");
-            }else if(e.key === 's'){ 
+            }else if(e.key === 's' || e.key === 'ArrowDown'){ 
                 Move("down");
-            }else if(e.key === 'a'){ 
+            }else if(e.key === 'a' || e.key === 'ArrowLeft'){ 
                 Move("left");
-            }else if(e.key === 'd'){ 
+            }else if(e.key === 'd' || e.key === 'ArrowRight'){ 
                 Move("right");
+            } else if(e.key === ' '){ 
+                startOver();
             }
         }
 
@@ -160,12 +162,6 @@ const GameContainer = () => {
     return (
         <div className='game-container'>
             <div className="flex bottom-text">WASD to move, or use arrow buttons</div>
-            <div className="flex lower-buttons">
-                <button id="refresh"  onClick={() => {startOver()}}>start over</button>
-                <button onClick={raiseLevel}>
-                    next level
-                </button>
-            </div>
             <div className="instructions game-instructions">
                 <h3 id="counter">Steps: {count}</h3>
                 <div className="controls">
@@ -184,6 +180,12 @@ const GameContainer = () => {
             </div>
             <div className='game-board' id='game-board'>
                 <MazeView startingMaze={initialMaze} maze={maze} setMaze={setMaze} count={count}/>
+            </div>
+            <div className="flex lower-buttons">
+                <button id="refresh"  onClick={() => {startOver()}}>start over</button>
+                <button onClick={raiseLevel}>
+                    next level
+                </button>
             </div>
         </div>
     )

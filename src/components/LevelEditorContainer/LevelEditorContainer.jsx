@@ -391,14 +391,16 @@ const GameContainer = () => {
             e.preventDefault();
             //console.log(`Key pressed: ${e.key}`);
             //console.log('cmoving from', playerX, playerY, maze)
-            if(e.key === 'w'){    
+            if(e.key === 'w' || e.key === 'ArrowUp'){    
                 Move("up");
-            }else if(e.key === 's'){ 
+            }else if(e.key === 's' || e.key === 'ArrowDown'){ 
                 Move("down");
-            }else if(e.key === 'a'){ 
+            }else if(e.key === 'a' || e.key === 'ArrowLeft'){ 
                 Move("left");
-            }else if(e.key === 'd'){ 
+            }else if(e.key === 'd' || e.key === 'ArrowRight'){ 
                 Move("right");
+            } else if(e.key === ' '){ 
+                startOver();
             }
         }
 
@@ -429,10 +431,6 @@ const GameContainer = () => {
             <div className="mr-2">Dropper: {dropper}</div>
         </div>
         <div className='game-container level-editor-container'>
-            <div className="flex lower-buttons">
-                <button id="refresh"  onClick={() => {startOver()}}>start over</button>
-                <button id="save" onClick={() => {Save()}}>save to console</button>
-            </div>
             <div className="instructions game-instructions">
                 <h3 id="counter">Steps: {count}</h3>
                 <div className="controls">
@@ -472,6 +470,10 @@ const GameContainer = () => {
                     <button id="refresh"  onClick={() => {resetPlayer()}}>reset player</button>
                     <button id="refresh"  onClick={() => {createRandArray(size)}}>randomise</button>
                 </div>
+            </div>
+            <div className="flex lower-buttons">
+                <button id="refresh"  onClick={() => {startOver()}}>start over</button>
+                <button id="save" onClick={() => {Save()}}>save to console</button>
             </div>
         </div>
         </>
