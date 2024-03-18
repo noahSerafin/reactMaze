@@ -8,12 +8,12 @@ import LevelEditor from "../LevelEditor/LevelEditor";
 
 const GameContainer = () => {
 
-    const [levelNum, setlevelNum] = useState(1)
+    const [levelNum, setlevelNum] = useState(levels.length)
     const [size, setSize] = useState(12)
     const [height, setHeight] = useState(12)
     const [count, setCount] = useState(0)
     const [maze, setMaze] = useState(levels[levelNum-1].map(row => [...row])) //current state of maze .map creates a deep copy to not affect the imported levels
-
+    const [canMove, setCanMove] = useState(true) 
     const [initialMaze, setInitialMaze] = useState(levels[levelNum-1].map(row => [...row])) //starting state of maze/level 
     const [dropper, setDropper] = useState('Wall/Path')
     
@@ -68,6 +68,9 @@ const GameContainer = () => {
 
     const Move = (input, currentMaze, currentPosition) => {
         
+        if(canMove){
+            setCanMove(false)
+
         let tempMaze = maze.map(row => [...row]);
         
         let playerx = playerX //findPlayerpos based on maze once correct maze value is being received
@@ -114,12 +117,14 @@ const GameContainer = () => {
                 switchDoors(tempMaze, tileInPath)
             }
             tempMaze[attemptedY][attemptedX] = 'P'
+            setCount(count + 1)
         }
         console.log('test:', /^[a-z]$/.test(tileInPath) && tileInPath !== 'p')
 
         console.log('tempMaze after move', tempMaze)
         setMaze(maze => [...tempMaze])
-        setCount(count + 1)
+        setCanMove(true)
+        }
     }
 
     function createArray(size) {
@@ -391,14 +396,16 @@ const GameContainer = () => {
             e.preventDefault();
             //console.log(`Key pressed: ${e.key}`);
             //console.log('cmoving from', playerX, playerY, maze)
-            if(e.key === 'w'){    
+            if(e.key === 'w' || e.key === 'ArrowUp'){    
                 Move("up");
-            }else if(e.key === 's'){ 
+            }else if(e.key === 's' || e.key === 'ArrowDown'){ 
                 Move("down");
-            }else if(e.key === 'a'){ 
+            }else if(e.key === 'a' || e.key === 'ArrowLeft'){ 
                 Move("left");
-            }else if(e.key === 'd'){ 
+            }else if(e.key === 'd' || e.key === 'ArrowRight'){ 
                 Move("right");
+            } else if(e.key === ' '){ 
+                startOver();
             }
         }
 
@@ -429,10 +436,6 @@ const GameContainer = () => {
             <div className="mr-2">Dropper: {dropper}</div>
         </div>
         <div className='game-container level-editor-container'>
-            <div className="flex lower-buttons">
-                <button id="refresh"  onClick={() => {startOver()}}>start over</button>
-                <button id="save" onClick={() => {Save()}}>save to console</button>
-            </div>
             <div className="instructions game-instructions">
                 <h3 id="counter">Steps: {count}</h3>
                 <div className="controls">
@@ -469,9 +472,12 @@ const GameContainer = () => {
                     <button onClick={() => {setNewDropper('P')}}>Player: {dropper==='P' ? 'selected' : ''}</button>
                     <button onClick={() => {setNewDropper('E')}}>Exit: {dropper==='E' ? 'selected' : ''}</button>
                     <button onClick={() => {setNewDropper('void')}}>Void: {dropper==='void' ? 'selected' : ''}</button>
-                    <button id="refresh"  onClick={() => {resetPlayer()}}>reset player</button>
                     <button id="refresh"  onClick={() => {createRandArray(size)}}>randomise</button>
                 </div>
+            </div>
+            <div className="flex lower-buttons">
+                <button id="refresh"  onClick={() => {startOver()}}>start over</button>
+                <button id="save" onClick={() => {Save()}}>save to console</button>
             </div>
         </div>
         </>

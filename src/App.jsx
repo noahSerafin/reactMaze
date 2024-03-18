@@ -23,6 +23,15 @@ function App() {
     <>
       <main className={`dark-mode-${darkMode}`}>
         <div className="top">
+          <h3 className='header'>Mazel</h3>
+        </div>
+        <div className={`colourblind-${colorblind}`}>
+          {isGameContainer ? <GameContainer /> : <LevelEditorContainer />}  
+        </div>
+          <div className="flex">
+            <button className='cb-button' onClick={toggleColorBlind}>Colourblind pallete: {colorblind ? 'On' : 'off'}</button>
+            <button className='cb-button' onClick={toggleDarkMode}>Dark mode: {darkMode ? 'On' : 'off'}</button>
+          </div>
           <div className="flex container-toggle">
             <div className='container-header'>
               <p>Mode:</p>
@@ -30,15 +39,6 @@ function App() {
             </div>
             <button onClick={toggleContainer}>Toggle Mode</button>
           </div>
-          <h3 className='header'>Mazel</h3>
-          <div className="flex">
-            <button className='cb-button' onClick={toggleColorBlind}>Colourblind pallete: {colorblind ? 'On' : 'off'}</button>
-            <button className='cb-button' onClick={toggleDarkMode}>Dark mode: {darkMode ? 'On' : 'off'}</button>
-          </div>
-        </div>
-        <div className={`colourblind-${colorblind}`}>
-          {isGameContainer ? <GameContainer /> : <LevelEditorContainer />}  
-        </div>
       </main>
     </>
   )
