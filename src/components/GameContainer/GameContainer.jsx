@@ -12,6 +12,7 @@ const GameContainer = () => {
 
     const [initialMaze, setInitialMaze] = useState(levels[levelNum-1].map(row => [...row])) //starting state of maze/level 
     const [count, setCount] = useState(0) //steps
+    const [canMove, setCanMove] = useState(true)
     
     const findPlayerPos = (currentMaze) => {
         for (let row = 0; row < currentMaze.length; row++) {
@@ -70,6 +71,10 @@ const GameContainer = () => {
 
     const Move = (input, currentMaze, currentPosition) => {
         
+        //setcanMove to false while function runs
+        setCanMove(false)
+        if(canMove){
+        //
         let tempMaze = maze.map(row => [...row]);
         
         let playerx = playerX //findPlayerpos based on maze once correct maze value is being received
@@ -125,6 +130,8 @@ const GameContainer = () => {
         setMaze(maze => [...tempMaze])
         if (tileInPath === 'E'){
             Finish()
+        }
+        setCanMove(true)
         }
     }
 

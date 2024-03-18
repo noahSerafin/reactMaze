@@ -8,12 +8,12 @@ import LevelEditor from "../LevelEditor/LevelEditor";
 
 const GameContainer = () => {
 
-    const [levelNum, setlevelNum] = useState(1)
+    const [levelNum, setlevelNum] = useState(levels.length)
     const [size, setSize] = useState(12)
     const [height, setHeight] = useState(12)
     const [count, setCount] = useState(0)
     const [maze, setMaze] = useState(levels[levelNum-1].map(row => [...row])) //current state of maze .map creates a deep copy to not affect the imported levels
-
+    const [canMove, setCanMove] = useState(true) 
     const [initialMaze, setInitialMaze] = useState(levels[levelNum-1].map(row => [...row])) //starting state of maze/level 
     const [dropper, setDropper] = useState('Wall/Path')
     
@@ -68,6 +68,9 @@ const GameContainer = () => {
 
     const Move = (input, currentMaze, currentPosition) => {
         
+        if(canMove){
+            setCanMove(false)
+
         let tempMaze = maze.map(row => [...row]);
         
         let playerx = playerX //findPlayerpos based on maze once correct maze value is being received
@@ -114,12 +117,14 @@ const GameContainer = () => {
                 switchDoors(tempMaze, tileInPath)
             }
             tempMaze[attemptedY][attemptedX] = 'P'
+            setCount(count + 1)
         }
         console.log('test:', /^[a-z]$/.test(tileInPath) && tileInPath !== 'p')
 
         console.log('tempMaze after move', tempMaze)
         setMaze(maze => [...tempMaze])
-        setCount(count + 1)
+        setCanMove(true)
+        }
     }
 
     function createArray(size) {
@@ -467,7 +472,6 @@ const GameContainer = () => {
                     <button onClick={() => {setNewDropper('P')}}>Player: {dropper==='P' ? 'selected' : ''}</button>
                     <button onClick={() => {setNewDropper('E')}}>Exit: {dropper==='E' ? 'selected' : ''}</button>
                     <button onClick={() => {setNewDropper('void')}}>Void: {dropper==='void' ? 'selected' : ''}</button>
-                    <button id="refresh"  onClick={() => {resetPlayer()}}>reset player</button>
                     <button id="refresh"  onClick={() => {createRandArray(size)}}>randomise</button>
                 </div>
             </div>
