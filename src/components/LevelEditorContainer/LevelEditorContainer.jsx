@@ -157,7 +157,7 @@ const GameContainer = () => {
                 }
             }
         }
-        tempMaze[1][1]='P'
+        //tempMaze[1][1]='P'
         return tempMaze;
     }
 
@@ -243,37 +243,53 @@ const GameContainer = () => {
 
     function generateMaze(size) {
         // Initialize the array
-        let resultArray = [];
+        let newMaze = createArray(size)
+        //let resultArray = [];
       
-        // Generate a random player position
-        const playerRow = Math.floor(Math.random() * size);
-        const playerCol = Math.floor(Math.random() * size);
+        //true size: (size/2) - 0.5
+
+        // Generate a random player position between 
+        const genOdd = (max) => {
+            let newNum = Math.floor(Math.random() * max)
+            while (newNum % 2 === 0 || newNum === 0 || newNum === max) {
+                newNum = Math.floor(Math.random() * max)
+            }
+            return newNum
+        }
+        const playerRow = genOdd(size)
+        const playerCol = genOdd(size)
+        console.log('px:', playerRow, 'py:', playerCol)
       
         // Generate a random exit position on the edge
         const exitSide = Math.floor(Math.random() * 4); // 0: top, 1: right, 2: bottom, 3: left
         let exitRow, exitCol;
-      
+        const exitPos = genOdd(size)
+        let goal = {
+            y: size-1,
+            x: size-1
+        }
         switch (exitSide) {
           case 0: // top
             exitRow = 0;
-            exitCol = Math.floor(Math.random() * size);
+            exitCol = exitPos;
             break;
           case 1: // right
-            exitRow = Math.floor(Math.random() * size);
+            exitRow = exitPos;
             exitCol = size - 1;
             break;
           case 2: // bottom
             exitRow = size - 1;
-            exitCol = Math.floor(Math.random() * size);
+            exitCol = exitPos;
             break;
           case 3: // left
-            exitRow = Math.floor(Math.random() * size);
+            exitRow = exitPos;
             exitCol = 0;
             break;
         }
+        console.log( 'ex:', exitRow, 'ey:', exitCol)
       
         // Loop through rows (size)
-        for (let i = 0; i < size; i++) {
+        /*for (let i = 0; i < size; i++) {
           // Initialize the row
           let row = [];
       
@@ -290,9 +306,13 @@ const GameContainer = () => {
       
           // Add the row to the result array
           resultArray.push(row);
-        }
-      
-       setMaze(resultArray);
+        }*/
+        
+        //console.log(resultArray)
+        newMaze[playerCol][playerRow] = 'P'
+        newMaze[exitCol][exitRow] = 'E'
+       //setMaze(resultArray);
+       setMaze(newMaze);
     }
 
     function drawPath(maze) {
@@ -348,7 +368,7 @@ const GameContainer = () => {
 
     const handleSizeChange = (event) => {
         if(!(event.target.value % 2 === 0)){
-            console.log(event.target.value)
+            //console.log(event.target.value)
             setSize(event.target.value);     
         }
         let newMaze = createArray(size)
@@ -458,7 +478,7 @@ const GameContainer = () => {
                 </div>
                 <div className="tile-list">
                     <div> 
-                        <p>Size:</p>
+                        <p>Size: {size} ({(size-1)/2})</p>
                         <input type="range" min="5" max="29" value={size} onChange={handleSizeChange}/>
                     </div>
                     <button onClick={() => {setNewDropper('Wall/Path')}}>Wall/Path: {dropper==='Wall/Path' ? 'selected' : ''}</button>
@@ -471,7 +491,7 @@ const GameContainer = () => {
                     <button onClick={() => {setNewDropper('c')}}>Cyan: {dropper==='c' ? 'selected' : ''}</button>
                     <button onClick={() => {setNewDropper('P')}}>Player: {dropper==='P' ? 'selected' : ''}</button>
                     <button onClick={() => {setNewDropper('E')}}>Exit: {dropper==='E' ? 'selected' : ''}</button>
-                    <button onClick={() => {setNewDropper('void')}}>Void: {dropper==='void' ? 'selected' : ''}</button>
+                    <button onClick={() => {generateMaze(size)}}>Gen: {dropper==='void' ? 'selected' : ''}</button>
                     <button id="refresh"  onClick={() => {createRandArray(size)}}>randomise</button>
                 </div>
             </div>
