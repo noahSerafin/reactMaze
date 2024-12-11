@@ -12,9 +12,9 @@ const GameContainer = () => {
     const [size, setSize] = useState(12)
     const [height, setHeight] = useState(12)
     const [count, setCount] = useState(0)
-    const [maze, setMaze] = useState(levels[levelNum-1].map(row => [...row])) //current state of maze .map creates a deep copy to not affect the imported levels
+    const [maze, setMaze] = useState(levels[levelNum-1].level.map(row => [...row])) //current state of maze .map creates a deep copy to not affect the imported levels
     const [canMove, setCanMove] = useState(true) 
-    const [initialMaze, setInitialMaze] = useState(levels[levelNum-1].map(row => [...row])) //starting state of maze/level 
+    const [initialMaze, setInitialMaze] = useState(levels[levelNum-1].level.map(row => [...row])) //starting state of maze/level 
     const [dropper, setDropper] = useState('Wall/Path')
     
     const findPlayerPos = (currentMaze) => {
@@ -39,7 +39,7 @@ const GameContainer = () => {
             return tempNum
         });
 
-        let tempLevel = Array.from(levels[tempNum-1])
+        let tempLevel = Array.from(levels[tempNum-1].level)
       
         setInitialMaze(() => [...tempLevel])
 

@@ -8,9 +8,9 @@ import { sassNull } from "sass";
 const GameContainer = () => {
 
     const [levelNum, setlevelNum] = useState(1)
-    const [maze, setMaze] = useState(levels[levelNum-1].map(row => [...row])) //current state of maze .map creates a deep copy to not affect the imported levels
+    const [maze, setMaze] = useState(levels[levelNum-1].level.map(row => [...row])) //current state of maze .map creates a deep copy to not affect the imported levels
 
-    const [initialMaze, setInitialMaze] = useState(levels[levelNum-1].map(row => [...row])) //starting state of maze/level 
+    const [initialMaze, setInitialMaze] = useState(levels[levelNum-1].level.map(row => [...row])) //starting state of maze/level 
     const [count, setCount] = useState(0) //steps
     const [canMove, setCanMove] = useState(true)
     
@@ -36,7 +36,7 @@ const GameContainer = () => {
             return tempNum
         });
 
-        let tempLevel = Array.from(levels[tempNum-1])
+        let tempLevel = Array.from(levels[tempNum-1].level)
       
         setInitialMaze(() => [...tempLevel])
 
@@ -158,7 +158,7 @@ const GameContainer = () => {
 
         document.addEventListener('keydown', handleKeyPress);
         console.log('useEffect:', 'level',levelNum, 'player',playerX, playerY, 'current:', maze, 'initial:', initialMaze)//values work here can Move() go inside this?
-        console.log(levels[levelNum-1])
+        console.log(levels[levelNum-1].level)
 
         return () => {
             // Cleanup: Remove event listener when the component unmounts
@@ -182,7 +182,7 @@ const GameContainer = () => {
                     </div>        
                 </div>
                 <div>
-                    <h3>Level: {levelNum}/{levels.length}</h3>
+                    <h3>Lvl min: {levels[levelNum-1].minimum}</h3>
                 </div>
             </div>
             <div className='game-board' id='game-board'>
@@ -190,6 +190,9 @@ const GameContainer = () => {
             </div>
             <div className="flex lower-buttons">
                 <button id="refresh"  onClick={() => {startOver()}}>start over</button>
+                <div>
+                    <h3>Level: {levelNum}/{levels.length}</h3>
+                </div>
                 <button onClick={raiseLevel}>
                     next level
                 </button>

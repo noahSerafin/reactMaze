@@ -47,7 +47,7 @@ const LevelEditor = (props) => {
                     return 'red door closed';
                 case 'B':
                     return 'blue door closed';
-                case 'G':
+                case 'G':    
                     return 'green door closed';
                 case 'M':
                     return 'magenta door closed';

@@ -286,7 +286,7 @@ div{
     //background-color: aliceblue;
 }
 .open::before{
-    box-shadow: 1px 1px 2px 2px darkgray inset;
+    box-shadow: 1px 1px 1px 1px darkgray inset;
 }
 .instructions{
     margin-bottom: 4rem;
@@ -330,7 +330,13 @@ div{
         display: none;
     }
 }
+.controls, .lower-buttons{
+    button{
+        background-color: whitesmoke;
+    }
+}
 .colourblind-true{
+    
     .red{
         background-color: #d55e00;
     }
@@ -352,6 +358,7 @@ div{
     .magenta{
         background-color: #cc79a7;
     }
+    
 }
 @media screen and (min-width: 480px) {
     .top{
