@@ -69,7 +69,7 @@ const EditableTile = (props) => {
 
     return (
         <div onClick={() => {setNewMaze(tile, val)}} id={tile.id} className={`${tile.classList} ${doorState}`} style={tile.style}>
-
+            {tile.text && <span style={{position: 'relative', zIndex: 10, color: 'black', fontSize: '0.6rem', fontWeight: 'bold'}}>{tile.text}</span>}
         </div>
     )
 }

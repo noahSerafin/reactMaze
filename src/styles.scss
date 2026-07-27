@@ -378,6 +378,18 @@ div{
     color: white;
 }
 
+.solution {
+    &:not(.door) {
+        background-color: palegoldenrod;
+    }
+    &.door::before {
+        background-color: palegoldenrod;
+    }
+    &.finish::before {
+        background-color: palegoldenrod;
+    }
+}
+
 //color fade
 /*@keyframes backgroundColorPalette {
 	0% {

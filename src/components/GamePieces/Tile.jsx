@@ -19,9 +19,10 @@ const Tile = (props) => {
     const [doorState, setDoorState] = useState(doorStart);
 
     return (
-        <div id={tile.id} className={`${tile.classList} ${doorState}`} style={tile.style}></div>
+        <div id={tile.id} className={`${tile.classList} ${doorState}`} style={tile.style}>
+            {tile.text && <span style={{position: 'relative', zIndex: 10, color: 'black', fontSize: '0.6rem', fontWeight: 'bold'}}>{tile.text}</span>}
+        </div>
     )
-    //{maze[tile.x][tile.y]}
 }
 
 export default Tile;

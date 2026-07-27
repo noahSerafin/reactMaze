@@ -5,6 +5,7 @@ import MazeController from '../MazeController/MazeController';
 import {levels} from "../../assets/levels";
 import { sassNull } from "sass";
 import LevelEditor from "../LevelEditor/LevelEditor";
+import { generateLevel } from "../../utils/gen";
 
 const GameContainer = () => {
 
@@ -16,7 +17,9 @@ const GameContainer = () => {
     const [canMove, setCanMove] = useState(true) 
     const [initialMaze, setInitialMaze] = useState(levels[levelNum-1].map(row => [...row])) //starting state of maze/level 
     const [dropper, setDropper] = useState('Wall/Path')
-    
+    const [solutionPath, setSolutionPath] = useState([])
+    const [showSolution, setShowSolution] = useState(false)
+    const [numColors, setNumColors] = useState(3)
     const findPlayerPos = (currentMaze) => {
         for (let row = 0; row < currentMaze.length; row++) {
             for (let column = 0; column < currentMaze[row].length; column++) {
@@ -295,6 +298,13 @@ const GameContainer = () => {
        setMaze(resultArray);
     }
 
+    function handleGenerateLevel() {
+        const { newMaze, solutionPath: newPath } = generateLevel(size, numColors);
+        setMaze(newMaze);
+        setInitialMaze(newMaze.map(row => [...row]));
+        setSolutionPath(newPath);
+    }
+
     function drawPath(maze) {
         const size = maze.length;
       
@@ -454,14 +464,14 @@ const GameContainer = () => {
             </div>
             <div className="flex">
                 <div className='game-board' id='game-board'>
-                    <LevelEditor dropper={dropper} setNewMaze={setNewMaze} startingMaze={initialMaze} maze={maze} setMaze={setMaze}/>
+                    <LevelEditor dropper={dropper} setNewMaze={setNewMaze} startingMaze={initialMaze} maze={maze} setMaze={setMaze} solutionPath={solutionPath} showSolution={showSolution} />
                 </div>
                 <div className="tile-list">
                     <div> 
                         <p>Size:</p>
                         <input type="range" min="5" max="29" value={size} onChange={handleSizeChange}/>
                     </div>
-                    <button onClick={() => {setNewDropper('Wall/Path')}}>Wall/Path: {dropper==='Wall/Path' ? 'selected' : ''}</button>
+                    <button onClick={() => {setNewDropper('Wall/Path')}}>Wall/Path/Player: {dropper==='Wall/Path' ? 'selected' : ''}</button>
                     <button onClick={() => {setNewDropper('r')}}>Red: {dropper==='r' ? 'selected' : ''}</button>
                     <button onClick={() => {setNewDropper('g')}}>Green: {dropper==='g' ? 'selected' : ''}</button>
                     <button onClick={() => {setNewDropper('b')}}>Blue: {dropper==='b' ? 'selected' : ''}</button>
@@ -473,6 +483,15 @@ const GameContainer = () => {
                     <button onClick={() => {setNewDropper('E')}}>Exit: {dropper==='E' ? 'selected' : ''}</button>
                     <button onClick={() => {setNewDropper('void')}}>Void: {dropper==='void' ? 'selected' : ''}</button>
                     <button id="refresh"  onClick={() => {createRandArray(size)}}>randomise</button>
+                    <div style={{display: 'flex', flexDirection: 'column', marginTop: '10px', gap: '5px'}}>
+                        <div style={{display: 'flex', gap: '5px', alignItems: 'center'}}>
+                            <span>Colors: {numColors}</span>
+                            <button onClick={() => setNumColors(Math.max(1, numColors - 1))}>-</button>
+                            <button onClick={() => setNumColors(Math.min(7, numColors + 1))}>+</button>
+                        </div>
+                        <button onClick={handleGenerateLevel}>Generate Solvable Level</button>
+                        <button onClick={() => setShowSolution(!showSolution)}>{showSolution ? 'Hide Solution' : 'Show Solution'}</button>
+                    </div>
                 </div>
             </div>
             <div className="flex lower-buttons">

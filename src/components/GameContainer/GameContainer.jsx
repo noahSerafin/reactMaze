@@ -4,6 +4,7 @@ import MazeView from '../MazeView/MazeView';
 import MazeController from '../MazeController/MazeController';
 import {levels} from "../../assets/levels";
 import { sassNull } from "sass";
+import { generateLevel } from "../../utils/gen";
 
 const GameContainer = () => {
 
@@ -13,6 +14,10 @@ const GameContainer = () => {
     const [initialMaze, setInitialMaze] = useState(levels[levelNum-1].map(row => [...row])) //starting state of maze/level 
     const [count, setCount] = useState(0) //steps
     const [canMove, setCanMove] = useState(true)
+    const [solutionPath, setSolutionPath] = useState([])
+    const [showSolution, setShowSolution] = useState(false)
+    const [numColors, setNumColors] = useState(3)
+    const [size, setSize] = useState(11)
     
     const findPlayerPos = (currentMaze) => {
         for (let row = 0; row < currentMaze.length; row++) {
@@ -50,6 +55,16 @@ const GameContainer = () => {
             return [...initialMaze]
         })
         setCount(0)
+    }
+
+    function handleGenerateLevel() {
+        const { newMaze, solutionPath: newPath } = generateLevel(size, numColors);
+        setMaze(newMaze);
+        setInitialMaze(newMaze.map(row => [...row]));
+        setSolutionPath(newPath);
+        setCount(0);
+        setPlayerX(findPlayerPos(newMaze).x);
+        setPlayerY(findPlayerPos(newMaze).y);
     }
 
     const switchDoors = (tempMaze, tile) => {
@@ -186,13 +201,26 @@ const GameContainer = () => {
                 </div>
             </div>
             <div className='game-board' id='game-board'>
-                <MazeView startingMaze={initialMaze} maze={maze} setMaze={setMaze} count={count}/>
+                <MazeView startingMaze={initialMaze} maze={maze} setMaze={setMaze} count={count} solutionPath={solutionPath} showSolution={showSolution} />
             </div>
             <div className="flex lower-buttons">
                 <button id="refresh"  onClick={() => {startOver()}}>start over</button>
                 <button onClick={raiseLevel}>
                     next level
                 </button>
+            </div>
+            <div className="flex lower-buttons" style={{marginTop: '10px', gap: '5px', flexWrap: 'wrap'}}>
+                <div style={{display: 'flex', gap: '5px', alignItems: 'center'}}>
+                    <span>Size:</span>
+                    <input type="range" min="5" max="29" step="2" value={size} onChange={(e) => setSize(parseInt(e.target.value))} />
+                </div>
+                <div style={{display: 'flex', gap: '5px', alignItems: 'center'}}>
+                    <span>Colors: {numColors}</span>
+                    <button onClick={() => setNumColors(Math.max(1, numColors - 1))}>-</button>
+                    <button onClick={() => setNumColors(Math.min(7, numColors + 1))}>+</button>
+                </div>
+                <button onClick={handleGenerateLevel}>Random Level</button>
+                <button onClick={() => setShowSolution(!showSolution)}>{showSolution ? 'Hide Solution' : 'Show Solution'}</button>
             </div>
         </div>
     )

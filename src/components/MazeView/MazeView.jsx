@@ -3,7 +3,7 @@ import Tile from "../GamePieces/Tile";
 
 const MazeView = (props) => {
 
-    const {startingMaze, maze, setMaze, player, count} = props;
+    const {startingMaze, maze, setMaze, player, count, solutionPath = [], showSolution = false} = props;
     const [stepCount, setStepCount] = useState(count)
     //console.log('gameBoard:', gameBoard);
 
@@ -119,6 +119,18 @@ const MazeView = (props) => {
                 if(newTile.classList.includes('corner')){
                     newTile.style.width = `${(segmentWidth)}%`
                     newTile.style.height = `${(segmentWidth)}%`
+                }
+                let pathIndices = [];
+                if (showSolution && solutionPath) {
+                    solutionPath.forEach((pos, index) => {
+                        if (pos.x === column && pos.y === row) {
+                            pathIndices.push(index);
+                        }
+                    });
+                }
+                if (pathIndices.length > 0) {
+                    newTile.classList = newTile.classList.concat(' solution ');
+                    newTile.text = pathIndices.join(', ');
                 }
                 newTile.id = `${row} ${column}`;
            

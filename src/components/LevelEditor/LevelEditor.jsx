@@ -3,7 +3,7 @@ import EditableTile from "../GamePieces/EditableTile";
 
 const LevelEditor = (props) => {
 
-    const {dropper, setDropper, setNewMaze, maze, setMaze, player, count} = props;
+    const {dropper, setDropper, setNewMaze, maze, setMaze, player, count, solutionPath = [], showSolution = false} = props;
     //console.log('gameBoard:', gameBoard);
 
     const wides = (maze[0].length-1)/2;
@@ -117,6 +117,18 @@ const LevelEditor = (props) => {
                 if(newTile.classList.includes('corner')){
                     newTile.style.width = `${(segmentWidth)}%`
                     newTile.style.height = `${(segmentWidth)}%`
+                }
+                let pathIndices = [];
+                if (showSolution && solutionPath) {
+                    solutionPath.forEach((pos, index) => {
+                        if (pos.x === column && pos.y === row) {
+                            pathIndices.push(index);
+                        }
+                    });
+                }
+                if (pathIndices.length > 0) {
+                    newTile.classList = newTile.classList.concat(' solution ');
+                    newTile.text = pathIndices.join(', ');
                 }
                 newTile.id = `${row} ${column}`;
            
