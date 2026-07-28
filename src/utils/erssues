@@ -1,0 +1,10 @@
+Current issues:
+
+solution and solution button needs to display solution length (indexes)
+
+Soltuion path is often escapable too easily
+Fix: Add fake paths (that can cross over solution, but cannot edit any tiels in it) that also go to the exit, but do not follow the door placement rules, and in fact deliberately place two of the same door type+color sequentially somewhere along it
+
+Difficulty:
+add a number to dictate the number of fake paths 1 - 3
+new fake paths can overwrite other fake path's tiles

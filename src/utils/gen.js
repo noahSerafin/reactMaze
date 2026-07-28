@@ -107,17 +107,20 @@ export const generateLevel = (size, numColors) => {
     const colorPool = ['r', 'b', 'g', 'y', 'm', 'c', 'o'];
     let shuffledColors = [...colorPool].sort(() => 0.5 - Math.random());
     let activeColors = shuffledColors.slice(0, numColors);
-    let openedColors = new Set();
+    let lastDoorState = new Map();
 
     for (let wall of solutionWallCoords) {
         let rng = Math.random();
         if (rng < 0.4 && activeColors.length > 0) {
             let color = activeColors[Math.floor(Math.random() * activeColors.length)];
-            if (openedColors.has(color)) {
-                newMaze[wall.r][wall.c] = Math.random() < 0.5 ? color.toUpperCase() : color;
+            if (lastDoorState.has(color)) {
+                let lastState = lastDoorState.get(color);
+                let nextState = lastState === color ? color.toUpperCase() : color;
+                newMaze[wall.r][wall.c] = nextState;
+                lastDoorState.set(color, nextState);
             } else {
                 newMaze[wall.r][wall.c] = color;
-                openedColors.add(color);
+                lastDoorState.set(color, color);
             }
         } else {
             newMaze[wall.r][wall.c] = 'p';
@@ -132,7 +135,7 @@ export const generateLevel = (size, numColors) => {
                 // Check if it's in solutionWallCoords
                 if (!solutionWallCoords.some(w => w.r === r && w.c === c)) {
                     let rng = Math.random();
-                    if (rng < 0.3) {
+                    if (rng < 0.2) {
                         newMaze[r][c] = 'p';
                     } else if (rng < 0.7) {
                         // Keep as initial '-' or '|'
