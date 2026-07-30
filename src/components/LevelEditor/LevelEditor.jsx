@@ -3,14 +3,14 @@ import EditableTile from "../GamePieces/EditableTile";
 
 const LevelEditor = (props) => {
 
-    const {dropper, setDropper, setNewMaze, maze, setMaze, player, count, solutionPath = [], showSolution = false} = props;
+    const { dropper, setDropper, setNewMaze, maze, setMaze, player, count, solutionPath = [], showSolution = false } = props;
     //console.log('gameBoard:', gameBoard);
 
-    const wides = (maze[0].length-1)/2;
-    const shorts = ((maze[0].length-1)/2+1);
+    const wides = (maze[0].length - 1) / 2;
+    const shorts = ((maze[0].length - 1) / 2 + 1);
     const segmentWidth = 100 / ((wides * 4) + shorts)
 
-    function returnPiece(tile){
+    function returnPiece(tile) {
         if (tile === tile.toLowerCase()) {
             // Lowercase tiles
             switch (tile) {
@@ -40,8 +40,8 @@ const LevelEditor = (props) => {
                     return 'void';
                 case 'e':
                     return 'finish';
-            }   
-        }  else {
+            }
+        } else {
             switch (tile) {
                 case 'R':
                     return 'red door closed';
@@ -66,21 +66,21 @@ const LevelEditor = (props) => {
     }
 
     //draw the maze
-    function draw(){
+    function draw() {
 
         let tempMaze = Array.from(maze);
         let tileList = []
-    
+
         //gameBoard.innerHTML = '';
         //tempMaze[player.y][player.x] = 'P'
 
         //draw goal
         //tempMaze[tempMaze[0].length-2][tempMaze.length-1] = 'E'
-        
+
         let i = 0;
-        for (let row = 0; row< tempMaze.length; row++) {
-            for (let column = 0; column < tempMaze[row].length; column++){
-                var tile = tempMaze[row][column];  
+        for (let row = 0; row < tempMaze.length; row++) {
+            for (let column = 0; column < tempMaze[row].length; column++) {
+                var tile = tempMaze[row][column];
                 const newTile = {
                     id: '',
                     classList: '',
@@ -95,34 +95,34 @@ const LevelEditor = (props) => {
                     x: row,
                     y: column
                 }
-                if(!isNaN(tile) && tile !== 4 && tile !== 0){
+                if (!isNaN(tile) && tile !== 4 && tile !== 0) {
                     newTile.classList = newTile.classList.concat(' door ')
-                }         
-                newTile.style.gridRowStart = newTile.style.gridRowStart = row +1
-                newTile.style.gridColumnStart = newTile.style.gridColumnStart = column +1
+                }
+                newTile.style.gridRowStart = newTile.style.gridRowStart = row + 1
+                newTile.style.gridColumnStart = newTile.style.gridColumnStart = column + 1
                 newTile.classList = newTile.classList.concat(returnPiece(tile));
                 newTile.classList = newTile.classList.concat(' tile ');
-                if(row == 0 || row  % 2 == 0){
+                if (row == 0 || row % 2 == 0) {
                     newTile.classList = newTile.classList.concat(' horizontal ')
-                    newTile.style.width = `${(segmentWidth*4)}%`
+                    newTile.style.width = `${(segmentWidth * 4)}%`
                     newTile.style.height = `${(segmentWidth)}%`
-                } else if(column == 0 || column  % 2 == 0 ){
+                } else if (column == 0 || column % 2 == 0) {
                     newTile.classList = newTile.classList.concat(' vertical ')
                     newTile.style.width = `${(segmentWidth)}%`
-                    newTile.style.height = `${(segmentWidth*4)}%`
-                } else{
+                    newTile.style.height = `${(segmentWidth * 4)}%`
+                } else {
                     newTile.classList = newTile.classList.concat(' full ')
-                    newTile.style.width = `${(segmentWidth*4)}%`
+                    newTile.style.width = `${(segmentWidth * 4)}%`
                 }
-                if(newTile.classList.includes('corner')){
+                if (newTile.classList.includes('corner')) {
                     newTile.style.width = `${(segmentWidth)}%`
                     newTile.style.height = `${(segmentWidth)}%`
                 }
                 let pathIndices = [];
                 if (showSolution && solutionPath) {
                     solutionPath.forEach((pos, index) => {
-                        if (pos.x === column && pos.y === row) {
-                            pathIndices.push(index);
+                        if (pos.x === column && pos.y === row && pos.x % 2 !== 0 && pos.y % 2 !== 0) {
+                            pathIndices.push(index / 2);
                         }
                     });
                 }
@@ -131,7 +131,7 @@ const LevelEditor = (props) => {
                     newTile.text = pathIndices.join(', ');
                 }
                 newTile.id = `${row} ${column}`;
-           
+
                 tileList.push(newTile)
                 i++
             }
@@ -144,11 +144,11 @@ const LevelEditor = (props) => {
     }
 
     let tileID = 0
-    let tiles = draw().map(function(tile) {
+    let tiles = draw().map(function (tile) {
         //console.log('drawing')
         tileID++
-        return(
-            <EditableTile key={tileID} tile={tile} dropper={dropper} setNewMaze={setNewMaze}/>
+        return (
+            <EditableTile key={tileID} tile={tile} dropper={dropper} setNewMaze={setNewMaze} />
         )
     })
 
@@ -157,10 +157,10 @@ const LevelEditor = (props) => {
         console.log('view', maze)
         //draw()
     }, [startingMaze, maze]);*/
-    
+
     return (
         <>
-        {tiles}
+            {tiles}
         </>
     )
 }

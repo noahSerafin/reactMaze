@@ -303,6 +303,7 @@ const GameContainer = () => {
         setMaze(newMaze);
         setInitialMaze(newMaze.map(row => [...row]));
         setSolutionPath(newPath);
+        setCount(0);
     }
 
     function drawPath(maze) {
@@ -468,7 +469,7 @@ const GameContainer = () => {
                 </div>
                 <div className="tile-list">
                     <div> 
-                        <p>Size:</p>
+                        <p>Size: {(size/2) - 0.5}x{(size/2) - 0.5}</p>
                         <input type="range" min="5" max="29" value={size} onChange={handleSizeChange}/>
                     </div>
                     <button onClick={() => {setNewDropper('Wall/Path')}}>Wall/Path/Player: {dropper==='Wall/Path' ? 'selected' : ''}</button>

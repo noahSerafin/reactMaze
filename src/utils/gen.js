@@ -92,6 +92,7 @@ export const generateLevel = (size, numColors) => {
     // Record solution path
     let solutionPath = [];
     let solutionWallCoords = [];
+    let containingWallsSet = new Set();
     for (let i = 0; i < path.length; i++) {
         if (i > 0) {
             let wr = path[i].wr;
@@ -100,6 +101,11 @@ export const generateLevel = (size, numColors) => {
             solutionWallCoords.push({ r: wr, c: wc });
         }
         solutionPath.push({ x: path[i].c, y: path[i].r });
+        
+        containingWallsSet.add(`${path[i].r - 1},${path[i].c}`);
+        containingWallsSet.add(`${path[i].r + 1},${path[i].c}`);
+        containingWallsSet.add(`${path[i].r},${path[i].c - 1}`);
+        containingWallsSet.add(`${path[i].r},${path[i].c + 1}`);
     }
     solutionPath.push({ x: chosenExit.c, y: chosenExit.r });
 
@@ -177,6 +183,33 @@ export const generateLevel = (size, numColors) => {
             }
 
             activeNodes.push({ r: next.r, c: next.c, doorState: nextDoorState });
+        }
+    }
+
+    // 7. Add extra doors and loops
+    for (let r = 1; r < size - 1; r++) {
+        for (let c = 1; c < size - 1; c++) {
+            // Check if it's a wall candidate (even/odd or odd/even)
+            if ((r % 2 === 0 && c % 2 !== 0) || (r % 2 !== 0 && c % 2 === 0)) {
+                // Check if it's an untouched wall
+                if (newMaze[r][c] === '-' || newMaze[r][c] === '|') {
+                    // Check if it's NOT a containing wall of the solution path
+                    if (!containingWallsSet.has(`${r},${c}`)) {
+                        // 30% chance to break this wall (chance to modify candidate wall)
+                        if (Math.random() < 0.3) {
+                            // 80% chance to be a door, 20% to be an open passage
+                            if (Math.random() < 0.8 && activeColors.length > 0) {
+                                let color = activeColors[Math.floor(Math.random() * activeColors.length)];
+                                // 50/50 chance for initial open/closed state
+                                let state = Math.random() < 0.5 ? color : color.toUpperCase();
+                                newMaze[r][c] = state;
+                            } else {
+                                newMaze[r][c] = 'p';
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
