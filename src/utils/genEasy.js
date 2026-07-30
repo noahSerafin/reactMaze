@@ -53,8 +53,8 @@ export const generateLevel = (size, numColors) => {
 
     // 4. Random Walk (DFS)
     let path = [{ r: pr, c: pc }];
-    let visits = Array.from({ length: size }, () => Array(size).fill(0));
-    visits[pr][pc] = 1;
+    let visited = Array.from({ length: size }, () => Array(size).fill(false));
+    visited[pr][pc] = true;
 
     let current = { r: pr, c: pc };
     let foundExit = false;
@@ -68,54 +68,21 @@ export const generateLevel = (size, numColors) => {
 
         let neighbors = [];
         const dirs = [[-2, 0], [2, 0], [0, -2], [0, 2]];
-        let prev = path.length > 1 ? path[path.length - 2] : null;
-        
         for (let d of dirs) {
             let nr = current.r + d[0];
             let nc = current.c + d[1];
-            
-            if (prev && nr === prev.r && nc === prev.c) continue;
-            
-            if (nr > 0 && nr < size - 1 && nc > 0 && nc < size - 1) {
-                if (visits[nr][nc] === 0) {
-                    neighbors.push({ r: nr, c: nc, wr: current.r + d[0] / 2, wc: current.c + d[1] / 2, type: 'normal' });
-                } else if (visits[nr][nc] === 1) {
-                    let nnr = nr + d[0];
-                    let nnc = nc + d[1];
-                    if (nnr > 0 && nnr < size - 1 && nnc > 0 && nnc < size - 1 && visits[nnr][nnc] === 0) {
-                        neighbors.push({ 
-                            r: nnr, c: nnc, 
-                            wr: nr + d[0] / 2, wc: nc + d[1] / 2, 
-                            cross_r: nr, cross_c: nc, 
-                            cross_wr: current.r + d[0] / 2, cross_wc: current.c + d[1] / 2, 
-                            type: 'cross' 
-                        });
-                    }
-                }
+            if (nr > 0 && nr < size - 1 && nc > 0 && nc < size - 1 && !visited[nr][nc]) {
+                neighbors.push({ r: nr, c: nc, wr: current.r + d[0] / 2, wc: current.c + d[1] / 2 });
             }
         }
 
         if (neighbors.length > 0) {
             let next = neighbors[Math.floor(Math.random() * neighbors.length)];
-            if (next.type === 'cross') {
-                visits[next.cross_r][next.cross_c] = 2;
-                visits[next.r][next.c] = 1;
-                path.push({ r: next.cross_r, c: next.cross_c, wr: next.cross_wr, wc: next.cross_wc, isCrossover: true });
-                path.push({ r: next.r, c: next.c, wr: next.wr, wc: next.wc, isCrossoverTarget: true });
-                current = { r: next.r, c: next.c };
-            } else {
-                visits[next.r][next.c] = 1;
-                path.push({ r: next.r, c: next.c, wr: next.wr, wc: next.wc });
-                current = { r: next.r, c: next.c };
-            }
+            visited[next.r][next.c] = true;
+            path.push({ r: next.r, c: next.c, wr: next.wr, wc: next.wc });
+            current = { r: next.r, c: next.c };
         } else {
-            let popped = path.pop();
-            if (popped && popped.isCrossoverTarget) {
-                let crossTile = path.pop();
-                if (crossTile) {
-                    visits[crossTile.r][crossTile.c] = 1;
-                }
-            }
+            path.pop();
             if (path.length > 0) {
                 current = { r: path[path.length - 1].r, c: path[path.length - 1].c };
             }
