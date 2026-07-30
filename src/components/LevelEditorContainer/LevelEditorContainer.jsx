@@ -10,7 +10,7 @@ import { generateLevel } from "../../utils/gen";
 const GameContainer = () => {
 
     const [levelNum, setlevelNum] = useState(levels.length)
-    const [size, setSize] = useState(12)
+    const [size, setSize] = useState(15)
     const [height, setHeight] = useState(12)
     const [count, setCount] = useState(0)
     const [maze, setMaze] = useState(levels[levelNum-1].map(row => [...row])) //current state of maze .map creates a deep copy to not affect the imported levels

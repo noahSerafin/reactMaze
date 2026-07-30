@@ -35,10 +35,10 @@ export const generateLevel = (size, numColors) => {
     // 3. Place Exit
     let exitOptions = [];
     for (let i = 1; i < size; i += 2) {
-        exitOptions.push({ r: 0, c: i });
-        exitOptions.push({ r: size - 1, c: i });
-        exitOptions.push({ r: i, c: 0 });
-        exitOptions.push({ r: i, c: size - 1 });
+        exitOptions.push({r: 0, c: i});
+        exitOptions.push({r: size - 1, c: i});
+        exitOptions.push({r: i, c: 0});
+        exitOptions.push({r: i, c: size - 1});
     }
 
     // Filter by Manhattan distance
@@ -52,11 +52,11 @@ export const generateLevel = (size, numColors) => {
     newMaze[chosenExit.r][chosenExit.c] = 'E';
 
     // 4. Random Walk (DFS)
-    let path = [{ r: pr, c: pc }];
-    let visited = Array.from({ length: size }, () => Array(size).fill(false));
+    let path = [{r: pr, c: pc}];
+    let visited = Array.from({length: size}, () => Array(size).fill(false));
     visited[pr][pc] = true;
-
-    let current = { r: pr, c: pc };
+    
+    let current = {r: pr, c: pc};
     let foundExit = false;
 
     while (!foundExit && path.length > 0) {
@@ -65,26 +65,26 @@ export const generateLevel = (size, numColors) => {
             foundExit = true;
             break;
         }
-
+        
         let neighbors = [];
         const dirs = [[-2, 0], [2, 0], [0, -2], [0, 2]];
         for (let d of dirs) {
             let nr = current.r + d[0];
             let nc = current.c + d[1];
             if (nr > 0 && nr < size - 1 && nc > 0 && nc < size - 1 && !visited[nr][nc]) {
-                neighbors.push({ r: nr, c: nc, wr: current.r + d[0] / 2, wc: current.c + d[1] / 2 });
+                neighbors.push({r: nr, c: nc, wr: current.r + d[0]/2, wc: current.c + d[1]/2});
             }
         }
-
+        
         if (neighbors.length > 0) {
             let next = neighbors[Math.floor(Math.random() * neighbors.length)];
             visited[next.r][next.c] = true;
-            path.push({ r: next.r, c: next.c, wr: next.wr, wc: next.wc });
-            current = { r: next.r, c: next.c };
+            path.push({r: next.r, c: next.c, wr: next.wr, wc: next.wc});
+            current = {r: next.r, c: next.c};
         } else {
             path.pop();
             if (path.length > 0) {
-                current = { r: path[path.length - 1].r, c: path[path.length - 1].c };
+                current = {r: path[path.length - 1].r, c: path[path.length - 1].c};
             }
         }
     }
@@ -96,12 +96,12 @@ export const generateLevel = (size, numColors) => {
         if (i > 0) {
             let wr = path[i].wr;
             let wc = path[i].wc;
-            solutionPath.push({ x: wc, y: wr });
-            solutionWallCoords.push({ r: wr, c: wc });
+            solutionPath.push({x: wc, y: wr});
+            solutionWallCoords.push({r: wr, c: wc});
         }
-        solutionPath.push({ x: path[i].c, y: path[i].r });
+        solutionPath.push({x: path[i].c, y: path[i].r});
     }
-    solutionPath.push({ x: chosenExit.c, y: chosenExit.r });
+    solutionPath.push({x: chosenExit.c, y: chosenExit.r});
 
     // 5. Place doors on the solution path
     const colorPool = ['r', 'b', 'g', 'y', 'm', 'c', 'o'];
@@ -127,56 +127,26 @@ export const generateLevel = (size, numColors) => {
         }
     }
 
-    // 6. Generate multi-branch fake paths (filling all remaining space)
-    let visitedNodes = Array.from({ length: size }, () => Array(size).fill(false));
-    let activeNodes = [];
-
-    for (let p of path) {
-        visitedNodes[p.r][p.c] = true;
-        activeNodes.push({ r: p.r, c: p.c, doorState: null });
-    }
-
-    while (activeNodes.length > 0) {
-        let idx = Math.floor(Math.random() * activeNodes.length);
-        let curr = activeNodes[idx];
-
-        let neighbors = [];
-        const dirs = [[-2, 0], [2, 0], [0, -2], [0, 2]];
-        for (let d of dirs) {
-            let nr = curr.r + d[0];
-            let nc = curr.c + d[1];
-            if (nr > 0 && nr < size - 1 && nc > 0 && nc < size - 1) {
-                if (!visitedNodes[nr][nc]) {
-                    neighbors.push({ r: nr, c: nc, wr: curr.r + d[0] / 2, wc: curr.c + d[1] / 2 });
+    // 6. Fill remaining tiles
+    for (let r = 1; r < size - 1; r++) {
+        for (let c = 1; c < size - 1; c++) {
+            // Is it an inner wall?
+            if ((r % 2 === 0 && c % 2 !== 0) || (r % 2 !== 0 && c % 2 === 0)) {
+                // Check if it's in solutionWallCoords
+                if (!solutionWallCoords.some(w => w.r === r && w.c === c)) {
+                    let rng = Math.random();
+                    if (rng < 0.2) {
+                        newMaze[r][c] = 'p';
+                    } else if (rng < 0.7) {
+                        // Keep as initial '-' or '|'
+                    } else if (activeColors.length > 0) {
+                        let color = activeColors[Math.floor(Math.random() * activeColors.length)];
+                        newMaze[r][c] = Math.random() < 0.5 ? color : color.toUpperCase();
+                    } else {
+                        newMaze[r][c] = 'p';
+                    }
                 }
             }
-        }
-
-        if (neighbors.length === 0) {
-            activeNodes.splice(idx, 1);
-        } else {
-            let next = neighbors[Math.floor(Math.random() * neighbors.length)];
-            visitedNodes[next.r][next.c] = true;
-
-            let nextDoorState = curr.doorState ? new Map(curr.doorState) : new Map();
-
-            let rng = Math.random();
-            if (rng < 0.4 && activeColors.length > 0) {
-                let color = activeColors[Math.floor(Math.random() * activeColors.length)];
-                if (nextDoorState.has(color)) {
-                    let lastState = nextDoorState.get(color);
-                    let nextState = lastState === color ? color.toUpperCase() : color;
-                    newMaze[next.wr][next.wc] = nextState;
-                    nextDoorState.set(color, nextState);
-                } else {
-                    newMaze[next.wr][next.wc] = color;
-                    nextDoorState.set(color, color);
-                }
-            } else {
-                newMaze[next.wr][next.wc] = 'p';
-            }
-
-            activeNodes.push({ r: next.r, c: next.c, doorState: nextDoorState });
         }
     }
 

@@ -5,9 +5,9 @@ import LevelEditorContainer from './components/LevelEditorContainer/LevelEditorC
 
 function App() {
 
-  const [isGameContainer, setIsGameContainer] = useState(true);
+  const [isGameContainer, setIsGameContainer] = useState(false);//true for release
   const [colorblind, setColorblind] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);//false for release
 
   const toggleContainer = () => {
     setIsGameContainer((prev) => !prev);
