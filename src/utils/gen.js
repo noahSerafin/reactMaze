@@ -150,6 +150,47 @@ export const generateLevel = (size, numColors) => {
 
     for (let wall of solutionWallCoords) {
         let rng = Math.random();
+        
+        let isNextToCrossover = false;
+        let crossoverTile = null;
+        let adjTiles = [];
+        if (wall.r % 2 === 0) {
+            adjTiles.push({ r: wall.r - 1, c: wall.c });
+            adjTiles.push({ r: wall.r + 1, c: wall.c });
+        } else {
+            adjTiles.push({ r: wall.r, c: wall.c - 1 });
+            adjTiles.push({ r: wall.r, c: wall.c + 1 });
+        }
+        
+        for (let t of adjTiles) {
+            if (visits[t.r] && visits[t.r][t.c] === 2) {
+                isNextToCrossover = true;
+                crossoverTile = t;
+                break;
+            }
+        }
+        
+        if (isNextToCrossover && crossoverTile) {
+            let doorsAround = 0;
+            const wallCoords = [
+                { r: crossoverTile.r - 1, c: crossoverTile.c },
+                { r: crossoverTile.r + 1, c: crossoverTile.c },
+                { r: crossoverTile.r, c: crossoverTile.c - 1 },
+                { r: crossoverTile.r, c: crossoverTile.c + 1 }
+            ];
+            for (let wc of wallCoords) {
+                if (wc.r >= 0 && wc.r < size && wc.c >= 0 && wc.c < size) {
+                    let val = newMaze[wc.r][wc.c];
+                    if (val && activeColors.includes(val.toLowerCase())) {
+                        doorsAround++;
+                    }
+                }
+            }
+            if (doorsAround < 2) {
+                rng = 0; // force door placement
+            }
+        }
+
         if (rng < 0.6 && activeColors.length > 0) {
             let color = activeColors[Math.floor(Math.random() * activeColors.length)];
             if (lastDoorState.has(color)) {
