@@ -3,7 +3,7 @@ import EditableTile from "../GamePieces/EditableTile";
 
 const LevelEditor = (props) => {
 
-    const { dropper, setDropper, setNewMaze, maze, setMaze, player, count, solutionPath = [], showSolution = false } = props;
+    const { dropper, setDropper, setNewMaze, maze, setMaze, player, count, solutionPath = [], showSolution = false, deadEnds = [] } = props;
     //console.log('gameBoard:', gameBoard);
 
     const wides = (maze[0].length - 1) / 2;
@@ -130,6 +130,13 @@ const LevelEditor = (props) => {
                     newTile.classList = newTile.classList.concat(' solution ');
                     newTile.text = pathIndices.join(', ');
                 }
+
+                let isDeadEnd = deadEnds.some(de => de.r === row && de.c === column);
+                if (isDeadEnd && showSolution) {
+                    //remove later
+                    newTile.classList = newTile.classList.concat('deadEnd')
+                }
+
                 newTile.id = `${row} ${column}`;
 
                 tileList.push(newTile)

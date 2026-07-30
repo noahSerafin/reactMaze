@@ -223,7 +223,7 @@ export const generateLevel = (size, numColors) => {
 
     for (let p of path) {
         visitedNodes[p.r][p.c] = true;
-        activeNodes.push({ r: p.r, c: p.c, doorState: p.doorState, hasChildren: false });
+        activeNodes.push({ r: p.r, c: p.c, doorState: p.doorState });
     }
 
     while (activeNodes.length > 0) {
@@ -243,12 +243,9 @@ export const generateLevel = (size, numColors) => {
         }
 
         if (neighbors.length === 0) {
-            if (!curr.hasChildren && !solutionNodesSet.has(`${curr.r},${curr.c}`)) {
-                deadEnds.push({ r: curr.r, c: curr.c });
-            }
+            deadEnds.push({ r: curr.r, c: curr.c });
             activeNodes.splice(idx, 1);
         } else {
-            curr.hasChildren = true;
             let next = neighbors[Math.floor(Math.random() * neighbors.length)];
             visitedNodes[next.r][next.c] = true;
 
@@ -271,7 +268,7 @@ export const generateLevel = (size, numColors) => {
             }
 
             nodeDoorStates[next.r][next.c] = nextDoorState;
-            activeNodes.push({ r: next.r, c: next.c, doorState: nextDoorState, hasChildren: false });
+            activeNodes.push({ r: next.r, c: next.c, doorState: nextDoorState });
         }
     }
 
@@ -297,7 +294,7 @@ export const generateLevel = (size, numColors) => {
             let neighbor = validNeighbors[Math.floor(Math.random() * validNeighbors.length)];
             let doorStateA = nodeDoorStates[deadEnd.r][deadEnd.c];
             let doorStateB = nodeDoorStates[neighbor.r][neighbor.c];
-            
+
             let validColors = [];
             for (let color of activeColors) {
                 let charA = doorStateA && doorStateA.has(color) ? doorStateA.get(color) : color.toUpperCase();

@@ -20,6 +20,7 @@ const GameContainer = () => {
     const [solutionPath, setSolutionPath] = useState([])
     const [showSolution, setShowSolution] = useState(false)
     const [numColors, setNumColors] = useState(3)
+    const [deadEnds, setDeadEnds] = useState([])
     const findPlayerPos = (currentMaze) => {
         for (let row = 0; row < currentMaze.length; row++) {
             for (let column = 0; column < currentMaze[row].length; column++) {
@@ -300,10 +301,11 @@ const GameContainer = () => {
 
     function handleGenerateLevel() {
         console.log('size', size)
-        const { newMaze, solutionPath: newPath } = generateLevel(size, numColors);
+        const { newMaze, solutionPath: newPath, deadEnds: newDeadEnds } = generateLevel(size, numColors);
         setMaze(newMaze);
         setInitialMaze(newMaze.map(row => [...row]));
         setSolutionPath(newPath);
+        setDeadEnds(newDeadEnds || []);
         setCount(0);
     }
 
@@ -466,7 +468,7 @@ const GameContainer = () => {
                 </div>
                 <div className="flex">
                     <div className='game-board' id='game-board'>
-                        <LevelEditor dropper={dropper} setNewMaze={setNewMaze} startingMaze={initialMaze} maze={maze} setMaze={setMaze} solutionPath={solutionPath} showSolution={showSolution} />
+                        <LevelEditor dropper={dropper} setNewMaze={setNewMaze} startingMaze={initialMaze} maze={maze} setMaze={setMaze} solutionPath={solutionPath} showSolution={showSolution} deadEnds={deadEnds} />
                     </div>
                     <div className="tile-list">
                         <div>

@@ -390,6 +390,12 @@ div{
     }
 }
 
+.deadEnd::after{
+    position: relative;
+    content: '!';
+    color: black;
+}
+
 //color fade
 /*@keyframes backgroundColorPalette {
 	0% {
