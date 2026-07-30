@@ -44,7 +44,7 @@ export const generateLevel = (size, numColors) => {
     // Filter by Manhattan distance
     let validExits = exitOptions.filter(pos => {
         let dist = Math.abs(pos.r - pr) + Math.abs(pos.c - pc);
-        return dist > Math.floor(size);
+        return dist > Math.floor(size / 2);
     });
     if (validExits.length === 0) validExits = exitOptions;
 
@@ -69,13 +69,13 @@ export const generateLevel = (size, numColors) => {
         let neighbors = [];
         const dirs = [[-2, 0], [2, 0], [0, -2], [0, 2]];
         let prev = path.length > 1 ? path[path.length - 2] : null;
-
+        
         for (let d of dirs) {
             let nr = current.r + d[0];
             let nc = current.c + d[1];
-
+            
             if (prev && nr === prev.r && nc === prev.c) continue;
-
+            
             if (nr > 0 && nr < size - 1 && nc > 0 && nc < size - 1) {
                 if (visits[nr][nc] === 0) {
                     neighbors.push({ r: nr, c: nc, wr: current.r + d[0] / 2, wc: current.c + d[1] / 2, type: 'normal' });
@@ -83,12 +83,12 @@ export const generateLevel = (size, numColors) => {
                     let nnr = nr + d[0];
                     let nnc = nc + d[1];
                     if (nnr > 0 && nnr < size - 1 && nnc > 0 && nnc < size - 1 && visits[nnr][nnc] === 0) {
-                        neighbors.push({
-                            r: nnr, c: nnc,
-                            wr: nr + d[0] / 2, wc: nc + d[1] / 2,
-                            cross_r: nr, cross_c: nc,
-                            cross_wr: current.r + d[0] / 2, cross_wc: current.c + d[1] / 2,
-                            type: 'cross'
+                        neighbors.push({ 
+                            r: nnr, c: nnc, 
+                            wr: nr + d[0] / 2, wc: nc + d[1] / 2, 
+                            cross_r: nr, cross_c: nc, 
+                            cross_wr: current.r + d[0] / 2, cross_wc: current.c + d[1] / 2, 
+                            type: 'cross' 
                         });
                     }
                 }
@@ -134,7 +134,7 @@ export const generateLevel = (size, numColors) => {
             solutionWallCoords.push({ r: wr, c: wc });
         }
         solutionPath.push({ x: path[i].c, y: path[i].r });
-
+        
         containingWallsSet.add(`${path[i].r - 1},${path[i].c}`);
         containingWallsSet.add(`${path[i].r + 1},${path[i].c}`);
         containingWallsSet.add(`${path[i].r},${path[i].c - 1}`);
@@ -150,7 +150,7 @@ export const generateLevel = (size, numColors) => {
 
     for (let wall of solutionWallCoords) {
         let rng = Math.random();
-
+        
         let isNextToCrossover = false;
         let crossoverTile = null;
         let adjTiles = [];
@@ -161,7 +161,7 @@ export const generateLevel = (size, numColors) => {
             adjTiles.push({ r: wall.r, c: wall.c - 1 });
             adjTiles.push({ r: wall.r, c: wall.c + 1 });
         }
-
+        
         for (let t of adjTiles) {
             if (visits[t.r] && visits[t.r][t.c] === 2) {
                 isNextToCrossover = true;
@@ -169,7 +169,7 @@ export const generateLevel = (size, numColors) => {
                 break;
             }
         }
-
+        
         if (isNextToCrossover && crossoverTile) {
             let doorsAround = 0;
             const wallCoords = [
