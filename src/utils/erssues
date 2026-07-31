@@ -2,14 +2,16 @@ Current issues:
 
 Fake paths can occasionally make the solution shorter, not a big deal right now. But would be good to know why
 
-To do:
-hard has no minimum crossovers, rerun until there are at least 2
-
 Determinism of rng based on date
 very hard mode?
 
 Default front page, move current to a tutorial version
 
 Clean up UI
+- instead of toggle game mode, have a menu for main game/tutorial/level editor
+
+Store darkmode and colorblind in localStorage
+
+Let users save up to 10 levels?
 
 Add a send to noah button to the editor

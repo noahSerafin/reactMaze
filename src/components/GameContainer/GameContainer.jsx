@@ -10,6 +10,8 @@ const GameContainer = () => {
 
     const [levelNum, setlevelNum] = useState(1)
     const [maze, setMaze] = useState(levels[levelNum-1].map(row => [...row])) //current state of maze .map creates a deep copy to not affect the imported levels
+    const [mazeHistory, setMazeHistory] = useState([])
+    const [undoLives, setUndoLives] = useState(3)
 
     const [initialMaze, setInitialMaze] = useState(levels[levelNum-1].map(row => [...row])) //starting state of maze/level 
     const [count, setCount] = useState(0) //steps
@@ -47,6 +49,8 @@ const GameContainer = () => {
 
         setMaze((prevMaze) => [...tempLevel]); 
         setCount(0)
+        setMazeHistory([])
+        setUndoLives(3)
         //console.log('newInitialMaze:', levelNum, initialMaze)
     }
 
@@ -55,6 +59,8 @@ const GameContainer = () => {
             return [...initialMaze]
         })
         setCount(0)
+        setMazeHistory([])
+        setUndoLives(3)
     }
 
     function handleGenerateLevel() {
@@ -63,6 +69,8 @@ const GameContainer = () => {
         setInitialMaze(newMaze.map(row => [...row]));
         setSolutionPath(newPath);
         setCount(0);
+        setMazeHistory([]);
+        setUndoLives(3);
         setPlayerX(findPlayerPos(newMaze).x);
         setPlayerY(findPlayerPos(newMaze).y);
     }
@@ -132,6 +140,7 @@ const GameContainer = () => {
             console.log('invalid move')
             tempMaze[playery][playerx] = 'P';
         } else {
+            setMazeHistory(history => [...history, maze.map(row => [...row])]);
             if(/^[a-z]$/.test(tileInPath) && tileInPath !== 'p'){//checks if tileInPath is a lowercase letter
                 //invertDoors(tempMaze, color)
                 switchDoors(tempMaze, tileInPath)
@@ -150,6 +159,16 @@ const GameContainer = () => {
         }
     }
 
+    const undo = useCallback(() => {
+        if (undoLives > 0 && mazeHistory.length > 0) {
+            const previousMaze = mazeHistory[mazeHistory.length - 1];
+            setMaze(previousMaze.map(row => [...row]));
+            setMazeHistory(history => history.slice(0, -1));
+            setCount(prev => prev > 0 ? prev - 1 : 0);
+            setUndoLives(lives => lives - 1);
+        }
+    }, [undoLives, mazeHistory]);
+
     useEffect(() => {   
         const handleKeyPress = (e) => {
             e.preventDefault();
@@ -165,6 +184,8 @@ const GameContainer = () => {
                 Move("right");
             } else if(e.key === ' '){ 
                 startOver();
+            } else if (e.key === 'Enter' || e.key === 'Backspace') {
+                undo();
             }
         }
 
@@ -179,7 +200,7 @@ const GameContainer = () => {
             // Cleanup: Remove event listener when the component unmounts
             document.removeEventListener('keydown', handleKeyPress);
         };
-    }, [maze, playerX, playerY, initialMaze]);//, JSON.stringify(maze)]);
+    }, [maze, playerX, playerY, initialMaze, undo]);//, JSON.stringify(maze)]);
 
     return (
         <div className='game-container'>
@@ -205,6 +226,9 @@ const GameContainer = () => {
             </div>
             <div className="flex lower-buttons">
                 <button id="refresh"  onClick={() => {startOver()}}>start over</button>
+                <button id="undo" onClick={undo} disabled={undoLives === 0 || mazeHistory.length === 0}>
+                    undo {'❤️'.repeat(undoLives)}
+                </button>
                 <button onClick={raiseLevel}>
                     next level
                 </button>

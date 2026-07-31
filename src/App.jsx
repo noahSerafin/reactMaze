@@ -23,7 +23,7 @@ function App() {
     <>
       <main className={`dark-mode-${darkMode}`}>
         <div className="top">
-          <h3 className='header'>Mazel</h3>
+          <h3 className='header'>Mazle</h3>
         </div>
         <div className={`colourblind-${colorblind}`}>
           {isGameContainer ? <GameContainer /> : <LevelEditorContainer />}  
