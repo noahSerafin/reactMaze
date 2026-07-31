@@ -65,10 +65,10 @@ button{
             align-items: center;
             content: url(./assets/arrow.svg);
             position: relative;
-            svg{
-                max-width: 1rem;
-                position: absolute;
-            }
+        }
+        svg{
+            max-width: 1rem;
+            position: absolute;
         }
     }
     #up::before{
@@ -423,3 +423,52 @@ div{
 	animation-timing-function: linear; 
 }
 // linear is enabled default, it’s not necessary to add it make it work but it can make your code more expressive */
+.top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 20px;
+    box-sizing: border-box;
+}
+
+.hamburger {
+    font-size: 24px;
+    cursor: pointer;
+    user-select: none;
+    z-index: 1000;
+}
+
+.burger-menu {
+    position: absolute;
+    top: 50px;
+    left: 10px;
+    background-color: #333;
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    box-shadow: 0px 4px 6px rgba(0,0,0,0.3);
+
+    button {
+        background: none;
+        border: none;
+        color: white;
+        text-align: left;
+        padding: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        width: 100%;
+    }
+
+    button:hover {
+        background-color: #555;
+    }
+
+    hr {
+        border-color: #555;
+        width: 100%;
+    }
+}
+

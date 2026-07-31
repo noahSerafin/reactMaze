@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import './styles.scss';
 import GameContainer from './components/GameContainer/GameContainer';
+import TutorialContainer from './components/TutorialContainer/TutorialContainer';
+import PracticeContainer from './components/PracticeContainer/PracticeContainer';
 import LevelEditorContainer from './components/LevelEditorContainer/LevelEditorContainer';
 
 function App() {
 
-  const [isGameContainer, setIsGameContainer] = useState(false);//true for release
+  const [mode, setMode] = useState('game'); // 'game', 'tutorial', 'practice', 'editor'
   const [colorblind, setColorblind] = useState(false);
-  const [darkMode, setDarkMode] = useState(true);//false for release
+  const [darkMode, setDarkMode] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  const toggleContainer = () => {
-    setIsGameContainer((prev) => !prev);
-  };
   const toggleColorBlind = () => {
     setColorblind((prev) => !prev);
   };
@@ -19,31 +19,50 @@ function App() {
     setDarkMode((prev) => !prev);
   };
 
+  const handleMenuClick = (newMode) => {
+    setMode(newMode);
+    setMenuOpen(false);
+  }
+
+  const renderContainer = () => {
+    switch (mode) {
+      case 'game': return <GameContainer />;
+      case 'tutorial': return <TutorialContainer />;
+      case 'practice': return <PracticeContainer />;
+      case 'editor': return <LevelEditorContainer />;
+      default: return <GameContainer />;
+    }
+  }
+
   return (
     <>
       <main className={`dark-mode-${darkMode}`}>
-        <div className="top">
+        <div className="top-nav">
+          <div className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
+            &#9776;
+          </div>
           <h3 className='header'>Mazle</h3>
+          <div style={{width: '24px'}}></div> {/* spacer to center title */}
         </div>
+        
+        {menuOpen && (
+          <div className="burger-menu">
+            <button onClick={() => handleMenuClick('game')}>Daily Mazes</button>
+            <button onClick={() => handleMenuClick('tutorial')}>Tutorial</button>
+            <button onClick={() => handleMenuClick('practice')}>Practice</button>
+            <button onClick={() => handleMenuClick('editor')}>Level Editor</button>
+            <hr />
+            <button onClick={toggleColorBlind}>Colorblind: {colorblind ? 'On' : 'Off'}</button>
+            <button onClick={toggleDarkMode}>Dark mode: {darkMode ? 'On' : 'Off'}</button>
+          </div>
+        )}
+
         <div className={`colourblind-${colorblind}`}>
-          {isGameContainer ? <GameContainer /> : <LevelEditorContainer />}  
+          {renderContainer()}  
         </div>
-          <div className="flex">
-            <button className='cb-button' onClick={toggleColorBlind}>Colourblind pallete: {colorblind ? 'On' : 'off'}</button>
-            <button className='cb-button' onClick={toggleDarkMode}>Dark mode: {darkMode ? 'On' : 'off'}</button>
-          </div>
-          <div className="flex container-toggle">
-            <div className='container-header'>
-              <p>Mode:</p>
-              {isGameContainer ?<h4> Game</h4> : <h4>Level Editor</h4>}
-            </div>
-            <button onClick={toggleContainer}>Toggle Mode</button>
-          </div>
       </main>
     </>
   )
 }
  
 export default App
-//<button id="right" onClick={setContainer(levelEditor)}>Level Editor</button> 
-//levels={levels}
