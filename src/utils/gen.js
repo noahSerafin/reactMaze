@@ -1,4 +1,4 @@
-export const generateLevel = (size, numColors) => {
+export const generateLevel = (size, numColors, maxCrossovers = Infinity) => {
     // 1. Initialize Blank Maze
     let newMaze = [];
     for (let r = 0; r < size; r++) {
@@ -80,16 +80,19 @@ export const generateLevel = (size, numColors) => {
                 if (visits[nr][nc] === 0) {
                     neighbors.push({ r: nr, c: nc, wr: current.r + d[0] / 2, wc: current.c + d[1] / 2, type: 'normal' });
                 } else if (visits[nr][nc] === 1) {
-                    let nnr = nr + d[0];
-                    let nnc = nc + d[1];
-                    if (nnr > 0 && nnr < size - 1 && nnc > 0 && nnc < size - 1 && visits[nnr][nnc] === 0) {
-                        neighbors.push({
-                            r: nnr, c: nnc,
-                            wr: nr + d[0] / 2, wc: nc + d[1] / 2,
-                            cross_r: nr, cross_c: nc,
-                            cross_wr: current.r + d[0] / 2, cross_wc: current.c + d[1] / 2,
-                            type: 'cross'
-                        });
+                    let currentCrossovers = path.filter(p => p.isCrossoverTarget).length;
+                    if (currentCrossovers < maxCrossovers) {
+                        let nnr = nr + d[0];
+                        let nnc = nc + d[1];
+                        if (nnr > 0 && nnr < size - 1 && nnc > 0 && nnc < size - 1 && visits[nnr][nnc] === 0) {
+                            neighbors.push({
+                                r: nnr, c: nnc,
+                                wr: nr + d[0] / 2, wc: nc + d[1] / 2,
+                                cross_r: nr, cross_c: nc,
+                                cross_wr: current.r + d[0] / 2, cross_wc: current.c + d[1] / 2,
+                                type: 'cross'
+                            });
+                        }
                     }
                 }
             }
@@ -315,4 +318,47 @@ export const generateLevel = (size, numColors) => {
     }
 
     return { newMaze, solutionPath, deadEnds };
+};
+
+export const generateLevelOfDifficulty = (difficulty) => {
+    let sizeRange, colorsRange, solutionLengthRange, maxCrossovers;
+    if (difficulty === 0) {
+        sizeRange = [15, 17];
+        colorsRange = [3, 5];
+        solutionLengthRange = [20, 80];
+        maxCrossovers = Math.floor(Math.random() * 2); // 0 or 1
+    } else if (difficulty === 1) {
+        sizeRange = [19, 21];
+        colorsRange = [5, 6];
+        solutionLengthRange = [60, 100];
+        maxCrossovers = Math.floor(Math.random() * 2) + 1; // 1 or 2
+    } else { // difficulty === 2
+        sizeRange = [21, 23];
+        colorsRange = [6, 7];
+        solutionLengthRange = [71, 1000]; // > 70
+        maxCrossovers = 99; // effectively infinity
+    }
+
+    const getRandomOdd = (min, max) => {
+        let odds = [];
+        for (let i = min; i <= max; i++) {
+            if (i % 2 !== 0) odds.push(i);
+        }
+        return odds[Math.floor(Math.random() * odds.length)];
+    }
+
+    let targetSize = getRandomOdd(sizeRange[0], sizeRange[1]);
+    let targetColors = Math.floor(Math.random() * (colorsRange[1] - colorsRange[0] + 1)) + colorsRange[0];
+
+    let level;
+    let attempts = 0;
+    while (attempts < 50) {
+        level = generateLevel(targetSize, targetColors, maxCrossovers);
+        let solLen = level.solutionPath.length;
+        if (solLen >= solutionLengthRange[0] && solLen <= solutionLengthRange[1]) {
+            break;
+        }
+        attempts++;
+    }
+    return { ...level, size: targetSize, numColors: targetColors };
 };

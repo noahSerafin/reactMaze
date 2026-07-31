@@ -5,7 +5,7 @@ import MazeController from '../MazeController/MazeController';
 import { levels } from "../../assets/levels";
 import { sassNull } from "sass";
 import LevelEditor from "../LevelEditor/LevelEditor";
-import { generateLevel } from "../../utils/gen";
+import { generateLevel, generateLevelOfDifficulty } from "../../utils/gen";
 
 const GameContainer = () => {
 
@@ -309,6 +309,17 @@ const GameContainer = () => {
         setCount(0);
     }
 
+    function handleGenerateLevelOfDifficulty(difficulty) {
+        const { newMaze, solutionPath: newPath, deadEnds: newDeadEnds, size: newSize, numColors: newNumColors } = generateLevelOfDifficulty(difficulty);
+        setSize(newSize);
+        setNumColors(newNumColors);
+        setMaze(newMaze);
+        setInitialMaze(newMaze.map(row => [...row]));
+        setSolutionPath(newPath);
+        setDeadEnds(newDeadEnds || []);
+        setCount(0);
+    }
+
     function drawPath(maze) {
         const size = maze.length;
 
@@ -494,6 +505,11 @@ const GameContainer = () => {
                                 <button onClick={() => setNumColors(Math.min(7, numColors + 1))}>+</button>
                             </div>
                             <button onClick={handleGenerateLevel}>Generate Solvable Level</button>
+                            <div style={{ display: 'flex', gap: '5px' }}>
+                                <button onClick={() => handleGenerateLevelOfDifficulty(0)}>Easy</button>
+                                <button onClick={() => handleGenerateLevelOfDifficulty(1)}>Medium</button>
+                                <button onClick={() => handleGenerateLevelOfDifficulty(2)}>Hard</button>
+                            </div>
                             <button onClick={() => setShowSolution(!showSolution)}>{showSolution ? 'Hide Solution' : 'Show Solution'}</button>
                         </div>
                     </div>
