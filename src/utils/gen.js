@@ -300,7 +300,7 @@ export const generateLevel = (size, numColors, maxCrossovers = Infinity) => {
             let neighbor = validNeighbors[Math.floor(Math.random() * validNeighbors.length)];
             let doorStateA = nodeDoorStates[deadEnd.r][deadEnd.c];
             let doorStateB = nodeDoorStates[neighbor.r][neighbor.c];
-            
+
             let validColors = [];
             for (let color of activeColors) {
                 let charA = doorStateA && doorStateA.has(color) ? doorStateA.get(color) : color.toUpperCase();
@@ -317,26 +317,29 @@ export const generateLevel = (size, numColors, maxCrossovers = Infinity) => {
         }
     }
 
-    return { newMaze, solutionPath, deadEnds };
+    return { newMaze, solutionPath, deadEnds, crossovers: path.filter(p => p.isCrossoverTarget).length };
 };
 
 export const generateLevelOfDifficulty = (difficulty) => {
-    let sizeRange, colorsRange, solutionLengthRange, maxCrossovers;
+    let sizeRange, colorsRange, solutionLengthRange, maxCrossovers, minCrossovers;
     if (difficulty === 0) {
         sizeRange = [15, 17];
         colorsRange = [3, 5];
         solutionLengthRange = [20, 80];
-        maxCrossovers = Math.floor(Math.random() * 2); // 0 or 1
+        maxCrossovers = 1;
+        minCrossovers = 0;
     } else if (difficulty === 1) {
         sizeRange = [19, 21];
         colorsRange = [5, 6];
         solutionLengthRange = [60, 100];
-        maxCrossovers = Math.floor(Math.random() * 2) + 1; // 1 or 2
+        maxCrossovers = 2;
+        minCrossovers = 1;
     } else { // difficulty === 2
         sizeRange = [21, 23];
         colorsRange = [6, 7];
         solutionLengthRange = [71, 1000]; // > 70
         maxCrossovers = 99; // effectively infinity
+        minCrossovers = 2;
     }
 
     const getRandomOdd = (min, max) => {
@@ -355,7 +358,7 @@ export const generateLevelOfDifficulty = (difficulty) => {
     while (attempts < 50) {
         level = generateLevel(targetSize, targetColors, maxCrossovers);
         let solLen = level.solutionPath.length;
-        if (solLen >= solutionLengthRange[0] && solLen <= solutionLengthRange[1]) {
+        if (solLen >= solutionLengthRange[0] && solLen <= solutionLengthRange[1] && level.crossovers >= minCrossovers) {
             break;
         }
         attempts++;

@@ -1,8 +1,9 @@
 Current issues:
 
-Fake paths can occasionally make the solution shorter, not a big deal right now
+Fake paths can occasionally make the solution shorter, not a big deal right now. But would be good to know why
 
 To do:
+hard has no minimum crossovers, rerun until there are at least 2
 
 Determinism of rng based on date
 very hard mode?
