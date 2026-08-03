@@ -23,6 +23,9 @@ const GameContainer = () => {
     const [showSolution, setShowSolution] = useState(false);
     const [count, setCount] = useState(0); // steps
     const [canMove, setCanMove] = useState(true);
+    const [solutionLengths, setSolutionLengths] = useState([0, 0, 0]);
+    const [showCompletionPopup, setShowCompletionPopup] = useState(false);
+    const [showGameOverPopup, setShowGameOverPopup] = useState(false);
 
     const [playerX, setPlayerX] = useState(-1);
     const [playerY, setPlayerY] = useState(-1);
@@ -41,20 +44,21 @@ const GameContainer = () => {
     const loadDailyMaze = useCallback((date, diff) => {
         const dateStr = getDateString(date);
         console.log(`Loading daily maze for ${dateStr}, difficulty: ${diff}`);
-        
+
         // generateLevelOfDifficulty uses the date string to deterministically generate
         const levelData = generateLevelOfDifficulty(diff, dateStr);
-        
+
         setMaze(levelData.newMaze);
         setInitialMaze(levelData.newMaze.map(row => [...row]));
         setSolutionPath(levelData.solutionPath);
-        
+
         setCount(0);
         setMazeHistory([]);
         setUndoLives(3);
         setShowSolution(false);
         setCanMove(true);
-        
+        setShowGameOverPopup(false);
+
         const pos = findPlayerPos(levelData.newMaze);
         setPlayerX(pos.x);
         setPlayerY(pos.y);
@@ -65,12 +69,18 @@ const GameContainer = () => {
         loadDailyMaze(currentDate, difficulty);
     }, [currentDate, difficulty, loadDailyMaze]);
 
-    // Force show solution if lives hit 0
+    // Calculate solution lengths when date changes
     useEffect(() => {
-        if (undoLives === 0) {
-            setShowSolution(true);
+        const dateStr = getDateString(currentDate);
+        setSolutionLengths([0, 1, 2].map(d => generateLevelOfDifficulty(d, dateStr).solutionPath.length));
+    }, [currentDate]);
+
+    // Show game over popup if lives hit 0
+    useEffect(() => {
+        if (undoLives === 0 && !showSolution) {
+            setShowGameOverPopup(true);
         }
-    }, [undoLives]);
+    }, [undoLives, showSolution]);
 
     const startOver = () => {
         setMaze(initialMaze.map(row => [...row]));
@@ -78,9 +88,15 @@ const GameContainer = () => {
         setMazeHistory([]);
         setUndoLives(3);
         setShowSolution(false);
+        setShowGameOverPopup(false);
         const pos = findPlayerPos(initialMaze);
         setPlayerX(pos.x);
         setPlayerY(pos.y);
+    };
+
+    const giveUp = () => {
+        setShowGameOverPopup(false);
+        setShowSolution(true);
     };
 
     const switchDoors = (tempMaze, tile) => {
@@ -97,17 +113,22 @@ const GameContainer = () => {
 
     const Finish = () => {
         console.log('COMPLETE');
-        alert(`Level complete! You took ${count} Steps`);
+        setShowCompletionPopup(true);
+    };
+
+    const closeCompletionPopup = () => {
+        setShowCompletionPopup(false);
+        setShowSolution(true);
     };
 
     const Move = useCallback((input) => {
-        if (!canMove || maze.length === 0) return;
+        if (!canMove || maze.length === 0 || showGameOverPopup || showCompletionPopup) return;
         setCanMove(false);
-        
+
         let tempMaze = maze.map(row => [...row]);
         let playerx = playerX;
         let playery = playerY;
-       
+
         tempMaze[playery][playerx] = 'p';
 
         let attemptedMove = null;
@@ -152,7 +173,7 @@ const GameContainer = () => {
             Finish();
         }
         setCanMove(true);
-    }, [canMove, maze, playerX, playerY]);
+    }, [canMove, maze, playerX, playerY, showGameOverPopup, showCompletionPopup]);
 
     const undo = useCallback(() => {
         if (undoLives > 0 && mazeHistory.length > 0) {
@@ -161,7 +182,7 @@ const GameContainer = () => {
             setMazeHistory(history => history.slice(0, -1));
             setCount(prev => prev > 0 ? prev - 1 : 0);
             setUndoLives(lives => lives - 1);
-            
+
             const pos = findPlayerPos(previousMaze);
             setPlayerX(pos.x);
             setPlayerY(pos.y);
@@ -200,9 +221,10 @@ const GameContainer = () => {
         const now = new Date();
         const pastYear = new Date();
         pastYear.setFullYear(now.getFullYear() - 1);
-        
+
         const randTime = pastYear.getTime() + Math.random() * (now.getTime() - pastYear.getTime());
         setCurrentDate(new Date(randTime));
+        setDifficulty(0);
     };
 
     const diffStrings = ["Easy", "Medium", "Hard"];
@@ -211,41 +233,66 @@ const GameContainer = () => {
 
     return (
         <div className='game-container'>
+            {showCompletionPopup && (
+                <div className="popup-overlay">
+                    <div className="popup-menu">
+                        <h2>Level complete!</h2>
+                        <p>You took {count} Steps</p>
+                        <button onClick={closeCompletionPopup}>
+                            Reveal Solution
+                        </button>
+                    </div>
+                </div>
+            )}
+            {showGameOverPopup && (
+                <div className="popup-overlay">
+                    <div className="popup-menu">
+                        <h2>Out of Lives!</h2>
+                        <p>What would you like to do?</p>
+                        <button onClick={giveUp}>
+                            Give Up (Reveal Solution)
+                        </button>
+                        <button onClick={startOver}>
+                            Start Over
+                        </button>
+                    </div>
+                </div>
+            )}
             <div className="flex bottom-text">WASD to move, or use arrow buttons</div>
             <div className="instructions game-instructions">
                 <h3 id="counter">Steps: {count}</h3>
                 <div className="controls">
                     <div className="control-up">
                         <button id="up" onClick={() => Move("up")}></button>
-                    </div>       
+                    </div>
                     <div className="flex">
                         <button id="left" onClick={() => Move("left")}></button>
                         <button id="down" onClick={() => Move("down")}></button>
-                        <button id="right" onClick={() => Move("right")}></button>                
-                    </div>        
+                        <button id="right" onClick={() => Move("right")}></button>
+                    </div>
                 </div>
                 <div>
                     <h3>{getDateString(currentDate)} - {diffStrings[difficulty]}</h3>
                 </div>
             </div>
-            
-            <div className="flex lower-buttons" style={{marginBottom: '10px'}}>
-                <button className={difficulty === 0 ? "active" : ""} onClick={() => setDifficulty(0)}>Easy</button>
-                <button className={difficulty === 1 ? "active" : ""} onClick={() => setDifficulty(1)}>Medium</button>
-                <button className={difficulty === 2 ? "active" : ""} onClick={() => setDifficulty(2)}>Hard</button>
+
+            <div className="flex lower-buttons" style={{ marginBottom: '10px' }}>
+                <button className={difficulty === 0 ? "active" : ""} onClick={() => setDifficulty(0)}>Easy [{solutionLengths[0] / 2 - 1}]</button>
+                <button className={difficulty === 1 ? "active" : ""} onClick={() => setDifficulty(1)}>Medium [{solutionLengths[1] / 2 - 1}]</button>
+                <button className={difficulty === 2 ? "active" : ""} onClick={() => setDifficulty(2)}>Hard [{solutionLengths[2] / 2 - 1}]</button>
             </div>
 
             <div className='game-board' id='game-board'>
                 <MazeView startingMaze={initialMaze} maze={maze} setMaze={setMaze} count={count} solutionPath={solutionPath} showSolution={showSolution} />
             </div>
-            
+
             <div className="flex lower-buttons">
                 <button id="refresh" onClick={startOver}>start over</button>
                 <button id="undo" onClick={undo} disabled={undoLives === 0 || mazeHistory.length === 0}>
                     undo {'❤️'.repeat(undoLives)}
                 </button>
             </div>
-            <div className="flex lower-buttons" style={{marginTop: '10px'}}>
+            <div className="flex lower-buttons" style={{ marginTop: '10px' }}>
                 <button onClick={() => changeDate(-1)}>Previous Day</button>
                 <button onClick={() => changeDate(1)} disabled={getDateString(currentDate) === getDateString(new Date())}>Next Day</button>
                 <button onClick={randomDate}>Random Date</button>

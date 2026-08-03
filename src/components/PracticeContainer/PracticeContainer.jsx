@@ -1,4 +1,3 @@
-
 import {  useCallback, useState, useEffect } from "react";
 import MazeView from '../MazeView/MazeView';
 import MazeController from '../MazeController/MazeController';
@@ -53,6 +52,7 @@ const PracticeContainer = () => {
     }
 
     function handleGenerateLevel() {
+        setShowSolution(false);
         const { newMaze, solutionPath: newPath } = generateLevel(size, numColors);
         setMaze(newMaze);
         setInitialMaze(newMaze.map(row => [...row]));
@@ -217,13 +217,14 @@ const PracticeContainer = () => {
                 <button id="undo" onClick={undo} disabled={undoLives === 0 || mazeHistory.length === 0}>
                     undo {'❤️'.repeat(undoLives)}
                 </button>
+                <button onClick={() => setShowSolution(!showSolution)}>{showSolution ? 'Hide Solution' : 'Show Solution'}</button>
                 <button onClick={raiseLevel}>
                     next level
                 </button>
             </div>
             <div className="flex lower-buttons" style={{marginTop: '10px', gap: '5px', flexWrap: 'wrap'}}>
                 <div style={{display: 'flex', gap: '5px', alignItems: 'center'}}>
-                    <span>Size:</span>
+                    <span>Size: {(size-1)/2}</span>
                     <input type="range" min="5" max="29" step="2" value={size} onChange={(e) => setSize(parseInt(e.target.value))} />
                 </div>
                 <div style={{display: 'flex', gap: '5px', alignItems: 'center'}}>
@@ -232,7 +233,6 @@ const PracticeContainer = () => {
                     <button onClick={() => setNumColors(Math.min(7, numColors + 1))}>+</button>
                 </div>
                 <button onClick={handleGenerateLevel}>Random Level</button>
-                <button onClick={() => setShowSolution(!showSolution)}>{showSolution ? 'Hide Solution' : 'Show Solution'}</button>
             </div>
         </div>
     )

@@ -42,27 +42,28 @@ function App() {
             &#9776;
           </div>
           <h3 className='header'>Mazle</h3>
-          <div style={{width: '24px'}}></div> {/* spacer to center title */}
+          <div style={{ width: '24px' }}></div> {/* spacer to center title */}
         </div>
-        
+
         {menuOpen && (
           <div className="burger-menu">
-            <button onClick={() => handleMenuClick('game')}>Daily Mazes</button>
+            <button className='x-button' onClick={() => setMenuOpen(false)}>X</button>
+            <button onClick={() => handleMenuClick('game')}>Daily</button>
             <button onClick={() => handleMenuClick('tutorial')}>Tutorial</button>
             <button onClick={() => handleMenuClick('practice')}>Practice</button>
             <button onClick={() => handleMenuClick('editor')}>Level Editor</button>
             <hr />
-            <button onClick={toggleColorBlind}>Colorblind: {colorblind ? 'On' : 'Off'}</button>
-            <button onClick={toggleDarkMode}>Dark mode: {darkMode ? 'On' : 'Off'}</button>
+            <button onClick={toggleColorBlind}>Colorblind Pallete: {colorblind ? 'On' : 'Off'}</button>
+            <button onClick={toggleDarkMode}>Dark Mode: {darkMode ? 'On' : 'Off'}</button>
           </div>
         )}
 
         <div className={`colourblind-${colorblind}`}>
-          {renderContainer()}  
+          {renderContainer()}
         </div>
       </main>
     </>
   )
 }
- 
+
 export default App
