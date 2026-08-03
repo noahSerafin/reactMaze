@@ -2,7 +2,7 @@ import { useCallback, useState, useEffect } from "react";
 import MazeView from '../MazeView/MazeView';
 import { generateLevelOfDifficulty } from "../../utils/gen";
 
-const GameContainer = () => {
+const GameContainer = ({ onScoreUpdate }) => {
     // Current date and difficulty state
     const [currentDate, setCurrentDate] = useState(new Date());
     const [difficulty, setDifficulty] = useState(0); // 0: Easy, 1: Medium, 2: Hard
@@ -26,6 +26,7 @@ const GameContainer = () => {
     const [solutionLengths, setSolutionLengths] = useState([0, 0, 0]);
     const [showCompletionPopup, setShowCompletionPopup] = useState(false);
     const [showGameOverPopup, setShowGameOverPopup] = useState(false);
+    const [solvedMazes, setSolvedMazes] = useState({});
 
     const [playerX, setPlayerX] = useState(-1);
     const [playerY, setPlayerY] = useState(-1);
@@ -67,6 +68,14 @@ const GameContainer = () => {
     // Load maze when date or difficulty changes
     useEffect(() => {
         loadDailyMaze(currentDate, difficulty);
+
+        const dateStr = getDateString(currentDate);
+        const saved = localStorage.getItem(`solvedMazes_${dateStr}`);
+        if (saved) {
+            setSolvedMazes(prev => ({ ...prev, [dateStr]: JSON.parse(saved) }));
+        } else {
+            setSolvedMazes(prev => ({ ...prev, [dateStr]: [] }));
+        }
     }, [currentDate, difficulty, loadDailyMaze]);
 
     // Calculate solution lengths when date changes
@@ -114,6 +123,19 @@ const GameContainer = () => {
     const Finish = () => {
         console.log('COMPLETE');
         setShowCompletionPopup(true);
+
+        const dateStr = getDateString(currentDate);
+        const saved = localStorage.getItem(`solvedMazes_${dateStr}`);
+        let currentSolved = saved ? JSON.parse(saved) : [];
+        if (!currentSolved.includes(difficulty)) {
+            currentSolved.push(difficulty);
+            localStorage.setItem(`solvedMazes_${dateStr}`, JSON.stringify(currentSolved));
+            setSolvedMazes(prev => ({
+                ...prev,
+                [dateStr]: currentSolved
+            }));
+            if (onScoreUpdate) onScoreUpdate();
+        }
     };
 
     const closeCompletionPopup = () => {
@@ -277,9 +299,15 @@ const GameContainer = () => {
             </div>
 
             <div className="flex lower-buttons" style={{ marginBottom: '10px' }}>
-                <button className={difficulty === 0 ? "active" : ""} onClick={() => setDifficulty(0)}>Easy [{solutionLengths[0] / 2 - 1}]</button>
-                <button className={difficulty === 1 ? "active" : ""} onClick={() => setDifficulty(1)}>Medium [{solutionLengths[1] / 2 - 1}]</button>
-                <button className={difficulty === 2 ? "active" : ""} onClick={() => setDifficulty(2)}>Hard [{solutionLengths[2] / 2 - 1}]</button>
+                <button className={difficulty === 0 ? "active" : ""} onClick={() => setDifficulty(0)}>
+                    Easy [{solutionLengths[0] / 2 - 1}] {(solvedMazes[getDateString(currentDate)] || []).includes(0) ? "⭐" : ""}
+                </button>
+                <button className={difficulty === 1 ? "active" : ""} onClick={() => setDifficulty(1)}>
+                    Medium [{solutionLengths[1] / 2 - 1}] {(solvedMazes[getDateString(currentDate)] || []).includes(1) ? "⭐" : ""}
+                </button>
+                <button className={difficulty === 2 ? "active" : ""} onClick={() => setDifficulty(2)}>
+                    Hard [{solutionLengths[2] / 2 - 1}] {(solvedMazes[getDateString(currentDate)] || []).includes(2) ? "⭐" : ""}
+                </button>
             </div>
 
             <div className='game-board' id='game-board'>
@@ -293,9 +321,9 @@ const GameContainer = () => {
                 </button>
             </div>
             <div className="flex lower-buttons" style={{ marginTop: '10px' }}>
-                <button onClick={() => changeDate(-1)}>Previous Day</button>
-                <button onClick={() => changeDate(1)} disabled={getDateString(currentDate) === getDateString(new Date())}>Next Day</button>
-                <button onClick={randomDate}>Random Date</button>
+                <button onClick={() => changeDate(-1)}>Yesterday</button>
+                <button onClick={() => changeDate(1)} disabled={getDateString(currentDate) === getDateString(new Date())}>Tomorrow</button>
+                <button onClick={randomDate}>Random</button>
             </div>
         </div>
     );
