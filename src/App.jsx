@@ -4,6 +4,7 @@ import GameContainer from './components/GameContainer/GameContainer';
 import TutorialContainer from './components/TutorialContainer/TutorialContainer';
 import PracticeContainer from './components/PracticeContainer/PracticeContainer';
 import LevelEditorContainer from './components/LevelEditorContainer/LevelEditorContainer';
+import UserLevelsContainer from './components/UserLevelsContainer/UserLevelsContainer';
 
 const getDateString = (date) => {
   const year = date.getFullYear();
@@ -26,6 +27,7 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [totalScore, setTotalScore] = useState(0);
   const [todayScore, setTodayScore] = useState(0);
+  const [customLevelToLoad, setCustomLevelToLoad] = useState(null);
 
   const calculateScores = useCallback(() => {
     let total = 0;
@@ -80,8 +82,9 @@ function App() {
     switch (mode) {
       case 'game': return <GameContainer onScoreUpdate={calculateScores} />;
       case 'tutorial': return <TutorialContainer />;
-      case 'practice': return <PracticeContainer />;
+      case 'practice': return <PracticeContainer customLevel={customLevelToLoad} />;
       case 'editor': return <LevelEditorContainer />;
+      case 'user-levels': return <UserLevelsContainer onLoadLevel={(level) => { setCustomLevelToLoad(level.maze); handleMenuClick('practice'); }} />;
       default: return <GameContainer onScoreUpdate={calculateScores} />;
     }
   }
@@ -106,6 +109,7 @@ function App() {
             <button onClick={() => handleMenuClick('tutorial')}>Tutorial</button>
             <button onClick={() => handleMenuClick('practice')}>Practice</button>
             <button onClick={() => handleMenuClick('editor')}>Level Editor</button>
+            <button onClick={() => handleMenuClick('user-levels')}>User Levels</button>
             <hr />
             <button onClick={toggleColorBlind}>Colorblind Pallete: {colorblind ? 'On' : 'Off'}</button>
             <button onClick={toggleDarkMode}>Dark Mode: {darkMode ? 'On' : 'Off'}</button>

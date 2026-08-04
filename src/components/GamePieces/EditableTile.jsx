@@ -19,22 +19,15 @@ const EditableTile = (props) => {
     const determineVal = (dropper) => {
         if(!tile.classList.includes('corner')){
             if(tile.classList.includes('full')){
-                //if(dropper === 'P'){
+                if (dropper === 'P') {
                     if(tile.value === 'P'){
                         setVal('p')
                     } else if(tile.value === 'p'){
                        setVal('P')
                     }
-                //} else 
-                    if (dropper ==='void'){
-                        if(tile.value === '0'){
-                            setVal('p')
-                        } else if(tile.value === 'p'){
-                            setVal('0')
-                            //setVal('0')
-                        }
-                    }
-                //}
+                } else {
+                    setVal(tile.value);
+                }
             } else if(dropper === 'Wall/Path'){
                 if (tile.value === '-' || tile.value === '|'){
                     setVal('p')

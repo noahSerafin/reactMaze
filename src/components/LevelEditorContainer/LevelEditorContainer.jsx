@@ -22,6 +22,10 @@ const GameContainer = () => {
     const [showSolution, setShowSolution] = useState(false)
     const [numColors, setNumColors] = useState(3)
     const [deadEnds, setDeadEnds] = useState([])
+    const [showSaveModal, setShowSaveModal] = useState(false);
+    const [saveLevelName, setSaveLevelName] = useState('');
+    const [saveSlot, setSaveSlot] = useState(1);
+    
     const findPlayerPos = (currentMaze) => {
         for (let row = 0; row < currentMaze.length; row++) {
             for (let column = 0; column < currentMaze[row].length; column++) {
@@ -406,22 +410,50 @@ const GameContainer = () => {
         setMaze(maze => [...tempMaze])
     }
 
-    const setNewMaze = (tileBeingChanged, dropper) => {
+    const setNewMaze = (tileBeingChanged, val) => {
+        if (dropper === 'solution') {
+            setSolutionPath(prev => [...prev, { x: tileBeingChanged.y, y: tileBeingChanged.x }]);
+            return;
+        }
 
-        //console.log('setting:', dropper, tileBeingChanged)
+        if (dropper === 'P' && val === 'P') {
+            const playerExists = maze.some(row => row.includes('P'));
+            if (playerExists) {
+                alert("There can only be one player in the maze!");
+                return;
+            }
+        }
+
         let tempMaze = maze.map(row => [...row]);
-
-        tempMaze[tileBeingChanged.x][tileBeingChanged.y] = dropper
-
-        setMaze(maze => [...tempMaze])
-        setInitialMaze(initialMaze => [...tempMaze])
+        tempMaze[tileBeingChanged.x][tileBeingChanged.y] = val;
+        setMaze(maze => [...tempMaze]);
+        setInitialMaze(initialMaze => [...tempMaze]);
     }
 
     const Save = () => {
-        console.log('Saving to console:')
-        console.log(maze)
-        navigator.clipboard.writeText(maze)
+        navigator.clipboard.writeText(JSON.stringify(maze));
+        alert('Maze copied to clipboard!');
     }
+
+    const handleSaveLevel = () => {
+        let storedLevels = [];
+        try {
+            const stored = localStorage.getItem('userLevels');
+            if (stored) {
+                storedLevels = JSON.parse(stored);
+            }
+        } catch (e) {}
+        
+        const padded = Array(10).fill(null);
+        storedLevels.forEach((val, idx) => {
+            if (idx < 10) padded[idx] = val;
+        });
+
+        padded[saveSlot - 1] = { name: saveLevelName || `Level ${saveSlot}`, maze: maze.map(row => [...row]) };
+        localStorage.setItem('userLevels', JSON.stringify(padded));
+        setShowSaveModal(false);
+        alert('Level saved!');
+    };
 
     const undo = useCallback(() => {
         if (mazeHistory.length > 0) {
@@ -477,7 +509,23 @@ const GameContainer = () => {
             <div className="flex">
                 <div className="mr-2">Size: {(size / 2) - 0.5}x{(size / 2) - 0.5}</div>
                 <div className="mr-2">Dropper: {dropper}</div>
+                <button style={{ marginLeft: '10px' }} onClick={() => setShowSaveModal(true)}>Save Level</button>
             </div>
+            {showSaveModal && (
+                <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: 'white', padding: '20px', zIndex: 1000, border: '1px solid black', display: 'flex', flexDirection: 'column', gap: '10px', color: 'black' }}>
+                    <h3>Save Level</h3>
+                    <input type="text" placeholder="Level Name" value={saveLevelName} onChange={(e) => setSaveLevelName(e.target.value)} style={{ color: 'black' }} />
+                    <select value={saveSlot} onChange={(e) => setSaveSlot(Number(e.target.value))} style={{ color: 'black' }}>
+                        {[...Array(10)].map((_, i) => (
+                            <option key={i} value={i + 1}>Slot {i + 1}</option>
+                        ))}
+                    </select>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                        <button onClick={handleSaveLevel}>Save</button>
+                        <button onClick={() => setShowSaveModal(false)}>Cancel</button>
+                    </div>
+                </div>
+            )}
             <div className='game-container level-editor-container'>
                 <div className="instructions game-instructions">
                     <h3 id="counter">Steps: {count}</h3>
@@ -504,7 +552,7 @@ const GameContainer = () => {
                             <p>Size: {(size / 2) - 0.5}x{(size / 2) - 0.5}</p>
                             <input type="range" min="5" max="29" value={size} onChange={handleSizeChange} />
                         </div>
-                        <button onClick={() => { setNewDropper('Wall/Path') }}>Wall/Path/Player: {dropper === 'Wall/Path' ? 'selected' : ''}</button>
+                        <button onClick={() => { setNewDropper('Wall/Path') }}>Wall/Path: {dropper === 'Wall/Path' ? 'selected' : ''}</button>
                         <button onClick={() => { setNewDropper('r') }}>Red: {dropper === 'r' ? 'selected' : ''}</button>
                         <button onClick={() => { setNewDropper('g') }}>Green: {dropper === 'g' ? 'selected' : ''}</button>
                         <button onClick={() => { setNewDropper('b') }}>Blue: {dropper === 'b' ? 'selected' : ''}</button>
@@ -514,7 +562,10 @@ const GameContainer = () => {
                         <button onClick={() => { setNewDropper('c') }}>Cyan: {dropper === 'c' ? 'selected' : ''}</button>
                         <button onClick={() => { setNewDropper('P') }}>Player: {dropper === 'P' ? 'selected' : ''}</button>
                         <button onClick={() => { setNewDropper('E') }}>Exit: {dropper === 'E' ? 'selected' : ''}</button>
-                        <button onClick={() => { setNewDropper('void') }}>Void: {dropper === 'void' ? 'selected' : ''}</button>
+                        <div style={{ display: 'flex', gap: '5px' }}>
+                            <button onClick={() => { setNewDropper('solution'); setShowSolution(true); }}>Solution ({solutionPath.length}): {dropper === 'solution' ? 'selected' : ''}</button>
+                            <button onClick={() => setSolutionPath(prev => prev.slice(0, -1))}>Remove Last Step</button>
+                        </div>
                         <button id="refresh" onClick={() => { createRandArray(size) }}>randomise</button>
                         <div style={{ display: 'flex', flexDirection: 'column', marginTop: '10px', gap: '5px' }}>
                             <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
@@ -535,7 +586,7 @@ const GameContainer = () => {
                 <div className="flex lower-buttons">
                     <button id="refresh" onClick={() => { startOver() }}>start over</button>
                     <button id="undo" onClick={undo} disabled={mazeHistory.length === 0}>undo</button>
-                    <button id="save" onClick={() => { Save() }}>save to console</button>
+                    <button id="save" onClick={() => { Save() }}>copy to clipboard</button>
                 </div>
             </div>
         </>
