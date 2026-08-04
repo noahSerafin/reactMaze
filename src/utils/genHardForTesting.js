@@ -1,5 +1,6 @@
-export const generateLevel = (size, numColors) => {
-    // 1. Initialize Blank Maze
+import { cyrb128, mulberry32 } from './gen';
+
+export const generateLevel = (size, numColors, prng = Math.random) => {
     let newMaze = [];
     for (let r = 0; r < size; r++) {
         let row = [];
@@ -28,8 +29,8 @@ export const generateLevel = (size, numColors) => {
 
     // 2. Place Player
     const maxOdd = Math.floor(size / 2);
-    const pr = (Math.floor(Math.random() * maxOdd) * 2) + 1;
-    const pc = (Math.floor(Math.random() * maxOdd) * 2) + 1;
+    const pr = (Math.floor(prng() * maxOdd) * 2) + 1;
+    const pc = (Math.floor(prng() * maxOdd) * 2) + 1;
     newMaze[pr][pc] = 'P';
 
     // 3. Place Exit
@@ -48,7 +49,7 @@ export const generateLevel = (size, numColors) => {
     });
     if (validExits.length === 0) validExits = exitOptions;
 
-    const chosenExit = validExits[Math.floor(Math.random() * validExits.length)];
+    const chosenExit = validExits[Math.floor(prng() * validExits.length)];
     newMaze[chosenExit.r][chosenExit.c] = 'E';
 
     // 4. Random Walk (DFS)
@@ -96,7 +97,7 @@ export const generateLevel = (size, numColors) => {
         }
 
         if (neighbors.length > 0) {
-            let next = neighbors[Math.floor(Math.random() * neighbors.length)];
+            let next = neighbors[Math.floor(prng() * neighbors.length)];
             if (next.type === 'cross') {
                 visits[next.cross_r][next.cross_c] = 2;
                 visits[next.r][next.c] = 1;
@@ -144,7 +145,7 @@ export const generateLevel = (size, numColors) => {
 
     // 5. Place doors on the solution path
     const colorPool = ['r', 'b', 'g', 'y', 'm', 'c', 'o'];
-    let shuffledColors = [...colorPool].sort(() => 0.5 - Math.random());
+    let shuffledColors = [...colorPool].sort(() => 0.5 - prng());
     let activeColors = shuffledColors.slice(0, numColors);
     let lastDoorState = new Map();
     let nodeDoorStates = Array.from({ length: size }, () => Array(size).fill(null));
@@ -154,7 +155,7 @@ export const generateLevel = (size, numColors) => {
 
     for (let i = 0; i < solutionWallCoords.length; i++) {
         let wall = solutionWallCoords[i];
-        let rng = Math.random();
+        let rng = prng();
 
         let isNextToCrossover = false;
         let crossoverTile = null;
@@ -197,7 +198,7 @@ export const generateLevel = (size, numColors) => {
         }
 
         if (rng < 0.6 && activeColors.length > 0) {
-            let color = activeColors[Math.floor(Math.random() * activeColors.length)];
+            let color = activeColors[Math.floor(prng() * activeColors.length)];
             if (lastDoorState.has(color)) {
                 let lastState = lastDoorState.get(color);
                 let nextState = lastState === color ? color.toUpperCase() : color;
@@ -227,7 +228,7 @@ export const generateLevel = (size, numColors) => {
     }
 
     while (activeNodes.length > 0) {
-        let idx = Math.floor(Math.random() * activeNodes.length);
+        let idx = Math.floor(prng() * activeNodes.length);
         let curr = activeNodes[idx];
 
         let neighbors = [];
@@ -246,14 +247,14 @@ export const generateLevel = (size, numColors) => {
             deadEnds.push({ r: curr.r, c: curr.c });
             activeNodes.splice(idx, 1);
         } else {
-            let next = neighbors[Math.floor(Math.random() * neighbors.length)];
+            let next = neighbors[Math.floor(prng() * neighbors.length)];
             visitedNodes[next.r][next.c] = true;
 
             let nextDoorState = curr.doorState ? new Map(curr.doorState) : new Map();
 
-            let rng = Math.random();
+            let rng = prng();
             if (rng < 0.6 && activeColors.length > 0) {
-                let color = activeColors[Math.floor(Math.random() * activeColors.length)];
+                let color = activeColors[Math.floor(prng() * activeColors.length)];
                 if (nextDoorState.has(color)) {
                     let lastState = nextDoorState.get(color);
                     let nextState = lastState === color ? color.toUpperCase() : color;
@@ -291,7 +292,7 @@ export const generateLevel = (size, numColors) => {
         }
 
         if (validNeighbors.length > 0) {
-            let neighbor = validNeighbors[Math.floor(Math.random() * validNeighbors.length)];
+            let neighbor = validNeighbors[Math.floor(prng() * validNeighbors.length)];
             let doorStateA = nodeDoorStates[deadEnd.r][deadEnd.c];
             let doorStateB = nodeDoorStates[neighbor.r][neighbor.c];
 
@@ -305,11 +306,32 @@ export const generateLevel = (size, numColors) => {
             }
 
             if (validColors.length > 0) {
-                let chosenChar = validColors[Math.floor(Math.random() * validColors.length)];
+                let chosenChar = validColors[Math.floor(prng() * validColors.length)];
                 newMaze[neighbor.wr][neighbor.wc] = chosenChar;
             }
         }
     }
 
     return { newMaze, solutionPath, deadEnds };
+};
+
+export const generateExpertLevel = (seedString = null) => {
+    let prng = Math.random;
+    if (seedString) {
+        let seed = cyrb128(seedString)[0];
+        prng = mulberry32(seed);
+    }
+    
+    const getRandomOdd = (min, max) => {
+        let odds = [];
+        for (let i = min; i <= max; i++) {
+            if (i % 2 !== 0) odds.push(i);
+        }
+        return odds[Math.floor(prng() * odds.length)];
+    }
+
+    let targetSize = getRandomOdd(25, 29);
+    let targetColors = 7;
+
+    return generateLevel(targetSize, targetColors, prng);
 };
