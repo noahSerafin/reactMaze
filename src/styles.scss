@@ -1,3 +1,26 @@
+:root {
+    --fs-h1: 2.5rem;
+    --fs-h2: 2rem;
+    --fs-h3: 1.5rem;
+    --fs-h4: 1.25rem;
+    --fs-p: 1rem;
+
+    @media screen and (max-width: 480px) {
+        --fs-h1: 2rem;
+        --fs-h2: 1.75rem;
+        --fs-h3: 1.25rem;
+        --fs-h4: 1.1rem;
+        --fs-p: 0.9rem;
+    }
+}
+
+h1 { font-size: var(--fs-h1); }
+h2 { font-size: var(--fs-h2); }
+h3 { font-size: var(--fs-h3); }
+h4 { font-size: var(--fs-h4); }
+p { font-size: var(--fs-p); }
+button { font-size: var(--fs-p); }
+
 #root {
     width: 100vw;
 
@@ -41,11 +64,17 @@ main {
 }
 
 button {
-    padding: 10px;
+    padding: 10px 16px;
     margin: 10px;
     background-color: lightgray;
-    border-radius: 0;
+    border-radius: 8px;
     border: 1px solid black;
+    font-size: var(--fs-p, 1rem);
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: darkgray;
 }
 
 .cb-button {
@@ -553,12 +582,14 @@ div {
     button {
         background: none;
         border: none;
+        border-radius: 8px;
         color: white;
         text-align: left;
         padding: 10px;
-        font-size: 16px;
+        font-size: var(--fs-p, 16px);
         cursor: pointer;
         width: 100%;
+        margin: 2px 0;
     }
 
     button:hover {
@@ -596,19 +627,20 @@ div {
     color: white;
 
     button {
-        background: gray;
+        background-color: #555;
         border: none;
+        border-radius: 8px;
         color: white;
         text-align: center;
         padding: 10px;
-        font-size: 16px;
+        font-size: var(--fs-p, 16px);
         cursor: pointer;
         width: 100%;
         margin: 5px 0;
     }
 
     button:hover {
-        background-color: #555;
+        background-color: #666;
     }
 }
 
