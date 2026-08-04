@@ -38,10 +38,6 @@ const PracticeContainer = () => {
     const [playerX, setPlayerX] = useState(findPlayerPos(maze).x)
     const [playerY, setPlayerY] = useState(findPlayerPos(maze).y)
 
-    const raiseLevel = () => {
-        handleGenerateLevel();
-    }
-
     const startOver = () => {
         setMaze((prevMaze)  => {
             return [...initialMaze]
@@ -218,9 +214,6 @@ const PracticeContainer = () => {
                     undo {'❤️'.repeat(undoLives)}
                 </button>
                 <button onClick={() => setShowSolution(!showSolution)}>{showSolution ? 'Hide Solution' : 'Show Solution'}</button>
-                <button onClick={raiseLevel}>
-                    next level
-                </button>
             </div>
             <div className="flex lower-buttons" style={{marginTop: '10px', gap: '5px', flexWrap: 'wrap'}}>
                 <div style={{display: 'flex', gap: '5px', alignItems: 'center'}}>
@@ -239,5 +232,3 @@ const PracticeContainer = () => {
 }
 
 export default PracticeContainer;
-
-//<MazeController playerx={playerX} playery={playerY} maze={maze} Move={Move} levelNum={levelNum} raiseLevel={raiseLevel}/>
