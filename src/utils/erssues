@@ -1,6 +1,11 @@
 Current issues:
 
 Fake paths can occasionally make the solution shorter, not a big deal right now. But would be good to know why
+- solution might involve looking ahead in the path at crossover points and making sure the doors between the current and future (but not next) tiles are closed
+
+fix deployment issue
+next level should always load levels for that day or next day if expert is just done.
+sort out button placement for phone
 
 Let users save up to 10 levels?
 

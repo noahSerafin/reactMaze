@@ -114,7 +114,14 @@ const GameContainer = ({ onScoreUpdate }) => {
     };
 
     const giveUp = () => {
+        setMaze(initialMaze.map(row => [...row]));
+        setCount(0);
+        setMazeHistory([]);
+        setUndoLives(0);
         setShowGameOverPopup(false);
+        const pos = findPlayerPos(initialMaze);
+        setPlayerX(pos.x);
+        setPlayerY(pos.y);
         setShowSolution(true);
     };
 
@@ -150,9 +157,18 @@ const GameContainer = ({ onScoreUpdate }) => {
         }
     };
 
-    const closeCompletionPopup = () => {
+    const nextLevel = () => {
         setShowCompletionPopup(false);
-        setShowSolution(true);
+        if (difficulty < 3) {
+            setDifficulty(prev => prev + 1);
+        } else {
+            setCurrentDate(prev => {
+                const d = new Date(prev);
+                d.setDate(d.getDate() + 1);
+                return d;
+            });
+            setDifficulty(0);
+        }
     };
 
     const Move = useCallback((input) => {
@@ -229,19 +245,38 @@ const GameContainer = ({ onScoreUpdate }) => {
             if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
                 e.preventDefault();
             }
+
+            if (showCompletionPopup) {
+                if (e.key === 'Enter') {
+                    if (getDateString(currentDate) === getDateString(new Date()) && difficulty === 3) {
+                        setShowCompletionPopup(false);
+                    } else {
+                        nextLevel();
+                    }
+                }
+                else if (e.key === 'Backspace') startOver();
+                return;
+            }
+
+            if (showGameOverPopup) {
+                if (e.key === 'Enter') giveUp();
+                else if (e.key === 'Backspace') startOver();
+                return;
+            }
+
             if (e.key === 'w' || e.key === 'ArrowUp') Move("up");
             else if (e.key === 's' || e.key === 'ArrowDown') Move("down");
             else if (e.key === 'a' || e.key === 'ArrowLeft') Move("left");
             else if (e.key === 'd' || e.key === 'ArrowRight') Move("right");
             else if (e.key === ' ') startOver();
-            else if (e.key === 'Enter' || e.key === 'Backspace') undo();
+            else if (e.key === 'Backspace') undo();
         };
 
         document.addEventListener('keydown', handleKeyPress);
         return () => {
             document.removeEventListener('keydown', handleKeyPress);
         };
-    }, [Move, undo]);
+    }, [Move, undo, showCompletionPopup, showGameOverPopup, currentDate, difficulty]);
 
     const changeDate = (days) => {
         setCurrentDate(prev => {
@@ -272,9 +307,15 @@ const GameContainer = ({ onScoreUpdate }) => {
                     <div className="popup-menu">
                         <h2>Level complete!</h2>
                         <p>You took {count} Steps</p>
-                        <button onClick={closeCompletionPopup}>
-                            Reveal Solution
-                        </button>
+                        {getDateString(currentDate) === getDateString(new Date()) && difficulty === 3 ? (
+                            <button onClick={() => setShowCompletionPopup(false)}>
+                                Close
+                            </button>
+                        ) : (
+                            <button onClick={nextLevel}>
+                                Next Level
+                            </button>
+                        )}
                     </div>
                 </div>
             )}
