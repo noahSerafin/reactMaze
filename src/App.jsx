@@ -95,7 +95,7 @@ function App() {
           </div>
           <h3 className='header'>Mazle</h3>
           <div className="score-display">
-            🏆 {totalScore} | Today: {todayScore}/3
+            🏆 {totalScore} | Today: {todayScore}/4
           </div>
         </div>
 
