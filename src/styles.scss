@@ -545,7 +545,7 @@ div {
     padding: 30px 50px 0px 50px;
     box-sizing: border-box;
     @media screen and (max-width: 480px) {
-        margin-top: 60px;
+        padding: 60px 30px 0px 30px;
     }
 }
 
@@ -682,4 +682,10 @@ div {
 }
 .centered{
     text-align: center;
+}
+.lower-buttons{
+    button{
+        margin: 0.1rem;
+        padding: 4px 2px;
+    }
 }

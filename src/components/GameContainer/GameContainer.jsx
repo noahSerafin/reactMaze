@@ -362,9 +362,6 @@ const GameContainer = ({ onScoreUpdate }) => {
                         <button id="right" onClick={() => Move("right")}></button>
                     </div>
                 </div>
-                <div>
-                    <h3>{getDateString(currentDate)} - {diffStrings[difficulty]}</h3>
-                </div>
             </div>
 
             <div className='game-board' id='game-board'>
