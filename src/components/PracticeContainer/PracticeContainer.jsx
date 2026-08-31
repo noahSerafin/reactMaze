@@ -5,13 +5,13 @@ import {levels} from "../../assets/levels";
 import { sassNull } from "sass";
 import { generateLevel } from "../../utils/gen";
 
-const PracticeContainer = () => {
+const PracticeContainer = ({ customLevel }) => {
 
     const [numColors, setNumColors] = useState(3)
     const [size, setSize] = useState(11)
 
-    // Initialize with a random maze
-    const [initialState] = useState(() => generateLevel(11, 3))
+    // Initialize with a random maze or custom level
+    const [initialState] = useState(() => customLevel ? { newMaze: customLevel.map(row => [...row]), solutionPath: [] } : generateLevel(11, 3))
     
     const [maze, setMaze] = useState(initialState.newMaze)
     const [initialMaze, setInitialMaze] = useState(initialState.newMaze.map(row => [...row])) 

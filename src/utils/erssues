@@ -1,10 +1,12 @@
 Current issues:
-
 Fake paths can occasionally make the solution shorter, not a big deal right now. But would be good to know why
 - solution might involve looking ahead in the path at crossover points and making sure the doors between the current and future (but not next) tiles are closed
 
-sort out button placement for phone
-next level should always load levels for that day or next day if expert was just done.
-Let users save up to 10 levels?
+crossovers can have an open door on the side of them, leading to an early solution, (also applies to genHard). Could be fixed by checking at the crossover point that there is a door on the second way out that will be closed when the player reaches the crossover the first time, but open when they reach it the second time. WAy out can be found by looking at the nodes around and finding the one with the highest index, then looking at the wall between them.
+
+Let users save up to 10 levels? - Naming textbox doesn't work
+Allow pasting of clipboard level into ParcticeContainer
 
 security check
+
+cleanup Files

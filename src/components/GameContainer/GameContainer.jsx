@@ -12,7 +12,7 @@ const GameContainer = ({ onScoreUpdate }) => {
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const day = String(date.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
+        return `${day}-${month}-${year}`;
     };
 
     // State for maze, initialized gracefully
@@ -378,9 +378,13 @@ const GameContainer = ({ onScoreUpdate }) => {
                 </button>
             </div>
             <div className="flex lower-buttons" style={{ marginTop: '10px' }}>
-                <button onClick={() => changeDate(-1)}>Yesterday</button>
-                <button onClick={() => changeDate(1)} disabled={getDateString(currentDate) === getDateString(new Date())}>Tomorrow</button>
-                <button onClick={randomDate}>Random</button>
+                <button className="arrow-btn flipped-btn" onClick={() => changeDate(-1)}>➜</button>
+                <div>
+                    <h3>{getDateString(currentDate)}</h3>
+                    <h3 className="centered">{diffStrings[difficulty]}</h3>
+                </div>
+                <button className="arrow-btn" onClick={() => changeDate(1)} disabled={getDateString(currentDate) === getDateString(new Date())}>➜</button>
+                <button className="random-btn" onClick={randomDate}>Random</button>
             </div>
         </div>
     );
