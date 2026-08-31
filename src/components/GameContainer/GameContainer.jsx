@@ -293,23 +293,6 @@ const GameContainer = ({ onScoreUpdate }) => {
                 </div>
             )}
             <div className="flex bottom-text">WASD to move, or use arrow buttons</div>
-            <div className="instructions game-instructions">
-                <h3 id="counter">Steps: {count}</h3>
-                <div className="controls">
-                    <div className="control-up">
-                        <button id="up" onClick={() => Move("up")}></button>
-                    </div>
-                    <div className="flex">
-                        <button id="left" onClick={() => Move("left")}></button>
-                        <button id="down" onClick={() => Move("down")}></button>
-                        <button id="right" onClick={() => Move("right")}></button>
-                    </div>
-                </div>
-                <div>
-                    <h3>{getDateString(currentDate)} - {diffStrings[difficulty]}</h3>
-                </div>
-            </div>
-
             <div className="flex lower-buttons" style={{ marginBottom: '10px' }}>
                 <button className={difficulty === 0 ? "active" : ""} onClick={() => setDifficulty(0)}>
                     Easy [{solutionLengths[0] / 2 - 1}] {(solvedMazes[getDateString(currentDate)] || []).includes(0) ? "⭐" : ""}
@@ -324,7 +307,19 @@ const GameContainer = ({ onScoreUpdate }) => {
                     Expert [{solutionLengths[3] / 2 - 1}] {(solvedMazes[getDateString(currentDate)] || []).includes(3) ? "⭐" : ""}
                 </button>
             </div>
-
+            <div className="instructions game-instructions">
+                <h3 id="counter">Steps: {count}</h3>
+                <div className="controls">
+                    <div className="control-up">
+                        <button id="up" onClick={() => Move("up")}></button>
+                    </div>
+                    <div className="flex">
+                        <button id="left" onClick={() => Move("left")}></button>
+                        <button id="down" onClick={() => Move("down")}></button>
+                        <button id="right" onClick={() => Move("right")}></button>
+                    </div>
+                </div>
+            </div>
             <div className='game-board' id='game-board'>
                 <MazeView startingMaze={initialMaze} maze={maze} setMaze={setMaze} count={count} solutionPath={solutionPath} showSolution={showSolution} />
             </div>
@@ -336,9 +331,13 @@ const GameContainer = ({ onScoreUpdate }) => {
                 </button>
             </div>
             <div className="flex lower-buttons" style={{ marginTop: '10px' }}>
-                <button onClick={() => changeDate(-1)}>Yesterday</button>
-                <button onClick={() => changeDate(1)} disabled={getDateString(currentDate) === getDateString(new Date())}>Tomorrow</button>
-                <button onClick={randomDate}>Random</button>
+                <button className="arrow-btn flipped-btn" onClick={() => changeDate(-1)}>➜</button>
+                <div>
+                    <h3>{getDateString(currentDate)}</h3>
+                    <h3 className="centered">{diffStrings[difficulty]}</h3>
+                </div>
+                <button className="arrow-btn" onClick={() => changeDate(1)} disabled={getDateString(currentDate) === getDateString(new Date())}>➜</button>
+                <button className="random-btn" onClick={randomDate}>Random</button>
             </div>
         </div>
     );

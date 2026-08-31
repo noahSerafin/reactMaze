@@ -509,7 +509,6 @@ const GameContainer = () => {
             <div className="flex">
                 <div className="mr-2">Size: {(size / 2) - 0.5}x{(size / 2) - 0.5}</div>
                 <div className="mr-2">Dropper: {dropper}</div>
-                <button style={{ marginLeft: '10px' }} onClick={() => setShowSaveModal(true)}>Save Level</button>
             </div>
             {showSaveModal && (
                 <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: 'white', padding: '20px', zIndex: 1000, border: '1px solid black', display: 'flex', flexDirection: 'column', gap: '10px', color: 'black' }}>
@@ -587,6 +586,7 @@ const GameContainer = () => {
                     <button id="refresh" onClick={() => { startOver() }}>start over</button>
                     <button id="undo" onClick={undo} disabled={mazeHistory.length === 0}>undo</button>
                     <button id="save" onClick={() => { Save() }}>copy to clipboard</button>
+                    <button style={{ marginLeft: '10px' }} onClick={() => setShowSaveModal(true)}>Save Level</button>
                 </div>
             </div>
         </>
