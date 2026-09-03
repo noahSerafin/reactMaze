@@ -10,12 +10,31 @@ const getDateString = (date) => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  return `${day}-${month}-${year}`;
 };
 
 function App() {
 
   const [mode, setMode] = useState('game'); // 'game', 'tutorial', 'practice', 'editor'
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [difficulty, setDifficulty] = useState(0);
+
+  const changeDate = (days) => {
+    setCurrentDate(prev => {
+        const d = new Date(prev);
+        d.setDate(d.getDate() + days);
+        return d;
+    });
+  };
+
+  const randomDate = () => {
+    const now = new Date();
+    const pastYear = new Date();
+    pastYear.setFullYear(now.getFullYear() - 1);
+    const randTime = pastYear.getTime() + Math.random() * (now.getTime() - pastYear.getTime());
+    setCurrentDate(new Date(randTime));
+    setDifficulty(0);
+  };
   const [colorblind, setColorblind] = useState(() => {
     const saved = localStorage.getItem('colorblind');
     return saved !== null ? JSON.parse(saved) : false;
@@ -80,12 +99,12 @@ function App() {
 
   const renderContainer = () => {
     switch (mode) {
-      case 'game': return <GameContainer onScoreUpdate={calculateScores} />;
+      case 'game': return <GameContainer onScoreUpdate={calculateScores} currentDate={currentDate} setCurrentDate={setCurrentDate} difficulty={difficulty} setDifficulty={setDifficulty} />;
       case 'tutorial': return <TutorialContainer />;
       case 'practice': return <PracticeContainer customLevel={customLevelToLoad} />;
       case 'editor': return <LevelEditorContainer />;
       case 'user-levels': return <UserLevelsContainer onLoadLevel={(level) => { setCustomLevelToLoad(level.maze); handleMenuClick('practice'); }} />;
-      default: return <GameContainer onScoreUpdate={calculateScores} />;
+      default: return <GameContainer onScoreUpdate={calculateScores} currentDate={currentDate} setCurrentDate={setCurrentDate} difficulty={difficulty} setDifficulty={setDifficulty} />;
     }
   }
 
@@ -105,7 +124,18 @@ function App() {
         {menuOpen && (
           <div className="burger-menu">
             <button className='x-button' onClick={() => setMenuOpen(false)}>X</button>
-            <button onClick={() => handleMenuClick('game')}>Daily</button>
+            {mode === 'game' ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', marginBottom: '2px', backgroundColor: '#444', padding: '10px', borderRadius: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <button style={{ width: 'auto', margin: 0, padding: '5px 10px' }} onClick={() => changeDate(-1)}>←</button>
+                  <span style={{ color: 'white', fontWeight: 'bold' }}>{getDateString(currentDate)}</span>
+                  <button style={{ width: 'auto', margin: 0, padding: '5px 10px' }} onClick={() => changeDate(1)} disabled={getDateString(currentDate) === getDateString(new Date())}>→</button>
+                </div>
+                <button style={{ margin: 0, backgroundColor: '#555' }} onClick={randomDate}>Random Date</button>
+              </div>
+            ) : (
+              <button onClick={() => handleMenuClick('game')}>Daily</button>
+            )}
             <button onClick={() => handleMenuClick('tutorial')}>Tutorial</button>
             <button onClick={() => handleMenuClick('practice')}>Practice</button>
             <button onClick={() => handleMenuClick('editor')}>Level Editor</button>

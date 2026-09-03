@@ -2,10 +2,8 @@ import { useCallback, useState, useEffect } from "react";
 import MazeView from '../MazeView/MazeView';
 import { generateLevelOfDifficulty } from "../../utils/gen";
 
-const GameContainer = ({ onScoreUpdate }) => {
+const GameContainer = ({ onScoreUpdate, currentDate, setCurrentDate, difficulty, setDifficulty }) => {
     // Current date and difficulty state
-    const [currentDate, setCurrentDate] = useState(new Date());
-    const [difficulty, setDifficulty] = useState(0); // 0: Easy, 1: Medium, 2: Hard
 
     const getDateString = (date) => {
         const year = date.getFullYear();
@@ -273,25 +271,7 @@ const GameContainer = ({ onScoreUpdate }) => {
         };
     }, [Move, undo, showCompletionPopup, showGameOverPopup, currentDate, difficulty]);
 
-    const changeDate = (days) => {
-        setCurrentDate(prev => {
-            const d = new Date(prev);
-            d.setDate(d.getDate() + days);
-            return d;
-        });
-    };
 
-    const randomDate = () => {
-        const now = new Date();
-        const pastYear = new Date();
-        pastYear.setFullYear(now.getFullYear() - 1);
-
-        const randTime = pastYear.getTime() + Math.random() * (now.getTime() - pastYear.getTime());
-        setCurrentDate(new Date(randTime));
-        setDifficulty(0);
-    };
-
-    const diffStrings = ["Easy", "Medium", "Hard"];
 
     if (maze.length === 0) return <div>Loading...</div>;
 
@@ -365,15 +345,6 @@ const GameContainer = ({ onScoreUpdate }) => {
                 <button id="undo" onClick={undo} disabled={undoLives === 0 || mazeHistory.length === 0}>
                     undo {'❤️'.repeat(undoLives)}
                 </button>
-            </div>
-            <div className="flex lower-buttons" style={{ marginTop: '10px' }}>
-                <button className="arrow-btn flipped-btn" onClick={() => changeDate(-1)}>➜</button>
-                <div>
-                    <h3>{getDateString(currentDate)}</h3>
-                    <h3 className="centered">{diffStrings[difficulty]}</h3>
-                </div>
-                <button className="arrow-btn" onClick={() => changeDate(1)} disabled={getDateString(currentDate) === getDateString(new Date())}>➜</button>
-                <button className="random-btn" onClick={randomDate}>Random</button>
             </div>
         </div>
     );
