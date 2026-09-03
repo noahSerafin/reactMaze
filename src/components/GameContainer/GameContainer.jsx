@@ -1,12 +1,11 @@
 import { useCallback, useState, useEffect } from "react";
 import MazeView from '../MazeView/MazeView';
 import { generateLevelOfDifficulty } from "../../utils/gen";
-import { generateExpertLevel } from "../../utils/genHardForTesting";
 
 const GameContainer = ({ onScoreUpdate }) => {
     // Current date and difficulty state
     const [currentDate, setCurrentDate] = useState(new Date());
-    const [difficulty, setDifficulty] = useState(0); // 0: Easy, 1: Medium, 2: Hard, 3: Expert
+    const [difficulty, setDifficulty] = useState(0); // 0: Easy, 1: Medium, 2: Hard
 
     const getDateString = (date) => {
         const year = date.getFullYear();
@@ -48,11 +47,8 @@ const GameContainer = ({ onScoreUpdate }) => {
         console.log(`Loading daily maze for ${dateStr}, difficulty: ${diff}`);
 
         let levelData;
-        if (diff === 3) {
-            levelData = generateExpertLevel(dateStr);
-        } else {
-            levelData = generateLevelOfDifficulty(diff, dateStr);
-        }
+        
+        levelData = generateLevelOfDifficulty(diff, dateStr);
 
         setMaze(levelData.newMaze);
         setInitialMaze(levelData.newMaze.map(row => [...row]));
@@ -90,7 +86,6 @@ const GameContainer = ({ onScoreUpdate }) => {
             generateLevelOfDifficulty(0, dateStr).solutionPath.length,
             generateLevelOfDifficulty(1, dateStr).solutionPath.length,
             generateLevelOfDifficulty(2, dateStr).solutionPath.length,
-            generateExpertLevel(dateStr).solutionPath.length
         ]);
     }, [currentDate]);
 
@@ -248,7 +243,7 @@ const GameContainer = ({ onScoreUpdate }) => {
 
             if (showCompletionPopup) {
                 if (e.key === 'Enter') {
-                    if (getDateString(currentDate) === getDateString(new Date()) && difficulty === 3) {
+                    if (getDateString(currentDate) === getDateString(new Date()) && difficulty === 2) {
                         setShowCompletionPopup(false);
                     } else {
                         nextLevel();
@@ -296,7 +291,7 @@ const GameContainer = ({ onScoreUpdate }) => {
         setDifficulty(0);
     };
 
-    const diffStrings = ["Easy", "Medium", "Hard", "Expert"];
+    const diffStrings = ["Easy", "Medium", "Hard"];
 
     if (maze.length === 0) return <div>Loading...</div>;
 
@@ -307,7 +302,7 @@ const GameContainer = ({ onScoreUpdate }) => {
                     <div className="popup-menu">
                         <h2>Level complete!</h2>
                         <p>You took {count} Steps</p>
-                        {getDateString(currentDate) === getDateString(new Date()) && difficulty === 3 ? (
+                        {getDateString(currentDate) === getDateString(new Date()) && difficulty === 2 ? (
                             <button onClick={() => setShowCompletionPopup(false)}>
                                 Close
                             </button>
@@ -344,9 +339,6 @@ const GameContainer = ({ onScoreUpdate }) => {
                 </button>
                 <button className={difficulty === 2 ? "active" : ""} onClick={() => setDifficulty(2)}>
                     Hard [{solutionLengths[2] / 2 - 1}] {(solvedMazes[getDateString(currentDate)] || []).includes(2) ? "⭐" : ""}
-                </button>
-                <button className={difficulty === 3 ? "active" : ""} onClick={() => setDifficulty(3)}>
-                    Expert [{solutionLengths[3] / 2 - 1}] {(solvedMazes[getDateString(currentDate)] || []).includes(3) ? "⭐" : ""}
                 </button>
             </div>
 
