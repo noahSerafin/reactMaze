@@ -307,9 +307,7 @@ const GameContainer = ({ onScoreUpdate, currentDate, setCurrentDate, difficulty,
                         </button>
                     </div>
                 </div>
-            )}
-            <div className="flex bottom-text">WASD to move, or use arrow buttons</div>
-        
+            )}        
             <div className="flex lower-buttons" style={{ marginBottom: '10px' }}>
                 <button className={difficulty === 0 ? "active" : ""} onClick={() => setDifficulty(0)}>
                     Easy [{solutionLengths[0] / 2 - 1}] {(solvedMazes[getDateString(currentDate)] || []).includes(0) ? "⭐" : ""}
