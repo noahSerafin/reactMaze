@@ -18,6 +18,7 @@ const TutorialContainer = () => {
     const [canMove, setCanMove] = useState(true)
     const [solutionPath, setSolutionPath] = useState([])
     const [showSolution, setShowSolution] = useState(false)
+    const [showCompletionPopup, setShowCompletionPopup] = useState(false)
     
     const findPlayerPos = (currentMaze) => {
         for (let row = 0; row < currentMaze.length; row++) {
@@ -75,14 +76,14 @@ const TutorialContainer = () => {
 
     const Finish = () => {
         console.log('COMPLETE')
-        alert(`Level complete! You took ${count} Steps`)
+        setShowCompletionPopup(true);
     }
 
     const Move = (input, currentMaze, currentPosition) => {
         
         //setcanMove to false while function runs
         setCanMove(false)
-        if(canMove){
+        if(canMove && !showCompletionPopup){
         //
         let tempMaze = maze.map(row => [...row]);
         
@@ -160,6 +161,14 @@ const TutorialContainer = () => {
             e.preventDefault();
             console.log(`Key pressed: ${e.key}`);
             //console.log('cmoving from', playerX, playerY, maze)
+            if (showCompletionPopup) {
+                if (e.key === 'Enter') {
+                    setShowCompletionPopup(false);
+                    raiseLevel();
+                }
+                return;
+            }
+
             if(e.key === 'w' || e.key === 'ArrowUp'){    
                 Move("up");
             }else if(e.key === 's' || e.key === 'ArrowDown'){ 
@@ -186,10 +195,24 @@ const TutorialContainer = () => {
             // Cleanup: Remove event listener when the component unmounts
             document.removeEventListener('keydown', handleKeyPress);
         };
-    }, [maze, playerX, playerY, initialMaze, undo]);//, JSON.stringify(maze)]);
+    }, [maze, playerX, playerY, initialMaze, undo, showCompletionPopup]);//, JSON.stringify(maze)]);
 
     return (
         <div className='game-container'>
+            {showCompletionPopup && (
+                <div className="popup-overlay">
+                    <div className="popup-menu">
+                        <h2>Level complete!</h2>
+                        <p>You took {count} Steps</p>
+                        <button onClick={() => { setShowCompletionPopup(false); raiseLevel(); }}>
+                            next level
+                        </button>
+                        <button onClick={() => setShowCompletionPopup(false)}>
+                            ok
+                        </button>
+                    </div>
+                </div>
+            )}
             <div className="flex bottom-text">WASD to move, or use arrow buttons</div>
             <div className="instructions game-instructions">
                 <h3 id="counter">Steps: {count}</h3>

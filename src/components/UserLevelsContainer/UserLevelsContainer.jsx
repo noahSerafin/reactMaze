@@ -22,10 +22,9 @@ const UserLevelsContainer = ({ onLoadLevel }) => {
 
     return (
         <div className="game-container">
-            <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>User Levels</h2>
             <div className="levels-list" style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'center' }}>
                 {userLevels.map((level, index) => (
-                    <button 
+                    <button
                         key={index}
                         onClick={() => level && onLoadLevel(level)}
                         style={{ width: '80%', padding: '15px', fontSize: '1.2rem', textAlign: 'left', cursor: level ? 'pointer' : 'default', opacity: level ? 1 : 0.6 }}
@@ -35,6 +34,7 @@ const UserLevelsContainer = ({ onLoadLevel }) => {
                     </button>
                 ))}
             </div>
+            <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>User Levels</h2>
         </div>
     );
 };

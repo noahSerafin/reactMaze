@@ -173,7 +173,11 @@ export const generateLevel = (size, numColors, maxCrossovers = Infinity, prng = 
 
     // 5. Place doors on the solution path
     const colorPool = ['r', 'b', 'g', 'y', 'm', 'c', 'o'];
-    let shuffledColors = [...colorPool].sort(() => 0.5 - prng());
+    let shuffledColors = [...colorPool];
+    for (let i = shuffledColors.length - 1; i > 0; i--) {
+        const j = Math.floor(prng() * (i + 1));
+        [shuffledColors[i], shuffledColors[j]] = [shuffledColors[j], shuffledColors[i]];
+    }
     let activeColors = shuffledColors.slice(0, numColors);
     let lastDoorState = new Map();
     let nodeDoorStates = Array.from({ length: size }, () => Array(size).fill(null));

@@ -21,9 +21,9 @@ function App() {
 
   const changeDate = (days) => {
     setCurrentDate(prev => {
-        const d = new Date(prev);
-        d.setDate(d.getDate() + days);
-        return d;
+      const d = new Date(prev);
+      d.setDate(d.getDate() + days);
+      return d;
     });
   };
 
@@ -117,7 +117,7 @@ function App() {
           </div>
           <h3 className='header'>Mazle</h3>
           <div className="score-display">
-            🏆 {totalScore} | Today: {todayScore}/4
+            🏆 {totalScore} | Today: {todayScore}/3
           </div>
         </div>
 
@@ -138,15 +138,15 @@ function App() {
             )}
             <button onClick={() => handleMenuClick('tutorial')}>Tutorial</button>
             <button onClick={() => handleMenuClick('practice')}>Practice</button>
-            <button onClick={() => handleMenuClick('editor')}>Level Editor</button>
-            <button onClick={() => handleMenuClick('user-levels')}>User Levels</button>
+            <button className="hide-on-mobile" onClick={() => handleMenuClick('editor')}>Level Editor</button>
+            <button className="hide-on-mobile" onClick={() => handleMenuClick('user-levels')}>User Levels</button>
             <hr />
             <button onClick={toggleColorBlind}>Colorblind Pallete: {colorblind ? 'On' : 'Off'}</button>
             <button onClick={toggleDarkMode}>Dark Mode: {darkMode ? 'On' : 'Off'}</button>
           </div>
         )}
 
-        <div className={`colourblind-${colorblind}`}>
+        <div className={`colourblind-${colorblind}`} style={{ overflowY: 'scroll' }}>
           {renderContainer()}
         </div>
       </main>

@@ -14,12 +14,29 @@
     }
 }
 
-h1 { font-size: var(--fs-h1); }
-h2 { font-size: var(--fs-h2); }
-h3 { font-size: var(--fs-h3); }
-h4 { font-size: var(--fs-h4); }
-p { font-size: var(--fs-p); }
-button { font-size: var(--fs-p); }
+h1 {
+    font-size: var(--fs-h1);
+}
+
+h2 {
+    font-size: var(--fs-h2);
+}
+
+h3 {
+    font-size: var(--fs-h3);
+}
+
+h4 {
+    font-size: var(--fs-h4);
+}
+
+p {
+    font-size: var(--fs-p);
+}
+
+button {
+    font-size: var(--fs-p);
+}
 
 #root {
     width: 100vw;
@@ -46,7 +63,7 @@ button { font-size: var(--fs-p); }
 }
 
 main {
-    background-color: lightgray;
+    background-color: darkgray;
 
     h1 {
         margin-bottom: 0;
@@ -93,6 +110,7 @@ button:hover {
     grid-template-columns: 1fr 2fr 1fr;
     grid-gap: 0.8rem;
     margin-bottom: 40px;
+
     #counter {
         text-align: right;
     }
@@ -167,6 +185,7 @@ div {
             padding: 5%;
             font-size: 0.9rem;
         }
+
         @media screen and (max-width: 600px) {
             font-size: 0.6rem;
         }
@@ -393,6 +412,37 @@ div {
         button {
             display: block;
         }
+
+        @media screen and (max-width: 680px) {
+            &.mobile-collapsible {
+                position: absolute;
+                background-color: rgba(128, 128, 128, 0.95);
+                overflow-y: scroll;
+                max-height: 80vh;
+                z-index: 100;
+                top: 0;
+                right: 0;
+                padding: 1rem;
+                border-radius: 8px;
+                border: 1px solid black;
+
+                &.closed {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    .mobile-tile-toggle {
+        display: none;
+
+        @media screen and (max-width: 680px) {
+            display: block;
+            z-index: 101;
+            position: absolute;
+            bottom: -50px;
+            margin: 0;
+        }
     }
 
     .tile {
@@ -475,11 +525,12 @@ div {
         justify-content: center;
     }
 
-    .lower-buttons{
-        h3{
+    .lower-buttons {
+        h3 {
             margin: 0;
         }
-        .random-btn{
+
+        .random-btn {
             left: 60%;
         }
     }
@@ -544,6 +595,7 @@ div {
     width: 100%;
     padding: 30px 50px 20px 50px;
     box-sizing: border-box;
+
     @media screen and (max-width: 480px) {
         padding: 60px 30px 20px 30px;
     }
@@ -664,7 +716,7 @@ div {
     }
 }
 
-.score-display{
+.score-display {
     font-weight: bold;
     text-align: right;
 }
@@ -673,20 +725,29 @@ div {
     transform: rotate(180deg);
 }
 
-.random-btn{
+.random-btn {
     position: absolute;
     left: 40%;
     padding: 2px 6px;
 }
-.arrow-btn{
+
+.arrow-btn {
     padding: 8px 12px;
 }
-.centered{
+
+.centered {
     text-align: center;
 }
-.lower-buttons{
-    button{
+
+.lower-buttons {
+    button {
         margin: 0.1rem;
         padding: 4px 2px;
+    }
+}
+
+.hide-on-mobile {
+    @media screen and (max-width: 680px) {
+        display: none !important;
     }
 }

@@ -25,7 +25,8 @@ const GameContainer = () => {
     const [showSaveModal, setShowSaveModal] = useState(false);
     const [saveLevelName, setSaveLevelName] = useState('');
     const [saveSlot, setSaveSlot] = useState(1);
-    
+    const [isTileListOpen, setIsTileListOpen] = useState(false);
+
     const findPlayerPos = (currentMaze) => {
         for (let row = 0; row < currentMaze.length; row++) {
             for (let column = 0; column < currentMaze[row].length; column++) {
@@ -442,8 +443,8 @@ const GameContainer = () => {
             if (stored) {
                 storedLevels = JSON.parse(stored);
             }
-        } catch (e) {}
-        
+        } catch (e) { }
+
         const padded = Array(10).fill(null);
         storedLevels.forEach((val, idx) => {
             if (idx < 10) padded[idx] = val;
@@ -542,11 +543,14 @@ const GameContainer = () => {
                         <h3>Level: {levelNum}/{levels.length}</h3>
                     </div>
                 </div>
-                <div className="flex">
+                <div className="flex" style={{ position: 'relative' }}>
                     <div className='game-board' id='game-board'>
                         <LevelEditor dropper={dropper} setNewMaze={setNewMaze} startingMaze={initialMaze} maze={maze} setMaze={setMaze} solutionPath={solutionPath} showSolution={showSolution} deadEnds={deadEnds} />
                     </div>
-                    <div className="tile-list">
+                    <button className="mobile-tile-toggle" onClick={() => setIsTileListOpen(!isTileListOpen)}>
+                        {isTileListOpen ? 'Hide Tools' : 'Show Tools'}
+                    </button>
+                    <div className={`tile-list mobile-collapsible ${!isTileListOpen ? 'closed' : ''}`}>
                         <div>
                             <p>Size: {(size / 2) - 0.5}x{(size / 2) - 0.5}</p>
                             <input type="range" min="5" max="29" value={size} onChange={handleSizeChange} />
@@ -585,7 +589,6 @@ const GameContainer = () => {
                 <div className="flex lower-buttons">
                     <button id="refresh" onClick={() => { startOver() }}>start over</button>
                     <button id="undo" onClick={undo} disabled={mazeHistory.length === 0}>undo</button>
-                    <button id="save" onClick={() => { Save() }}>copy to clipboard</button>
                     <button style={{ marginLeft: '10px' }} onClick={() => setShowSaveModal(true)}>Save Level</button>
                 </div>
             </div>
@@ -594,6 +597,8 @@ const GameContainer = () => {
 }
 
 export default GameContainer;
+//<button id="save" onClick={() => { Save() }}>copy to clipboard</button>
+
 //<button id="refresh"  onClick={() => {generateMaze(size)}}>generate</button>
 
 //<MazeController playerx={playerX} playery={playerY} maze={maze} Move={Move} levelNum={levelNum} raiseLevel={raiseLevel}/>
