@@ -89,7 +89,7 @@ const GameContainer = ({ onScoreUpdate, currentDate, setCurrentDate, difficulty,
 
     // Show game over popup if lives hit 0
     useEffect(() => {
-        if (undoLives === 0 && !showSolution) {
+        if (undoLives < 0 && !showSolution) {
             setShowGameOverPopup(true);
         }
     }, [undoLives, showSolution]);
@@ -219,7 +219,7 @@ const GameContainer = ({ onScoreUpdate, currentDate, setCurrentDate, difficulty,
     }, [canMove, maze, playerX, playerY, showGameOverPopup, showCompletionPopup]);
 
     const undo = useCallback(() => {
-        if (undoLives > 0 && mazeHistory.length > 0) {
+        if (undoLives >= 0 && mazeHistory.length > 0) {
             const previousMaze = mazeHistory[mazeHistory.length - 1];
             setMaze(previousMaze.map(row => [...row]));
             setMazeHistory(history => history.slice(0, -1));
@@ -340,7 +340,7 @@ const GameContainer = ({ onScoreUpdate, currentDate, setCurrentDate, difficulty,
 
             <div className="flex lower-buttons">
                 <button id="refresh" onClick={startOver}>start over</button>
-                <button id="undo" onClick={undo} disabled={undoLives === 0 || mazeHistory.length === 0}>
+                <button id="undo" onClick={undo} disabled={undoLives < 0 || mazeHistory.length === 0}>
                     undo {'❤️'.repeat(undoLives)}
                 </button>
             </div>
